@@ -3,7 +3,7 @@ import sys
 import socket
 import json
 
-SERVER_HOST = '10.68.21.27'
+SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 14242
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
