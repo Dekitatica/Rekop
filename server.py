@@ -1,5 +1,8 @@
 import socket
 import threading
+import json
+import sys
+
 
 
 class Player:
@@ -7,6 +10,33 @@ class Player:
         money = 0
         x = 0
         y = 0
+
+class Hero(Player):
+    def __init__(self) -> None:
+        super().__init__()
+        self.upgrades = {
+            "miner_1" : -1,
+            "miner_2" : -1,
+            "miner_3" : -1,
+            "miner_4" : -1,
+            "miner_5" : -1,
+            "miner_6" : -1,
+            "miner_7" : -1,
+            "miner_8" : -1,
+        }
+
+
+class AntiHero(Player):
+    def __init__(self) -> None:
+        super().__init__()
+        self.upgrades = {
+            "atm_1" : -1,
+            "atm_2" : -1,
+            "atm_3" : -1,
+            "atm_4" : -1,
+            "atm_5" : -1,
+            
+        }
 
 class Client:
     def __init__(self,player : Player,con : socket.socket) -> None:
