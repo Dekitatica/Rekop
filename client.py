@@ -32,6 +32,11 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((SERVER_HOST, SERVER_PORT))
 
 thread_server_handler = threading.Thread(target=handle_server,args=[client_socket])
-
+frame_count = 0
 while True:
+    if frame_count<100000:
+        client_socket.sendall("heartbeat_received".encode())
+    if frame_count%1000==0:
+        print(frame_count)
+    frame_count+=1
     pass

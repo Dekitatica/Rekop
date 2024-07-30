@@ -22,7 +22,7 @@ class Client:
     def __init__(self,player : Player,con : socket.socket) -> None:
         self.player = player
         self.con = con
-        self.last_heartbeat_ms = 0
+        self.last_heartbeat_ms = round(time.time() * 1000)
         self.do_i_kill_myself = False
 
 
@@ -62,10 +62,12 @@ class AntiHero(Player):
 
 def client_kicker(connections):
     while True:
+
         time_in_ms = round(time.time() * 1000)
         for con in connections:
             if con.last_heartbeat_ms-time_in_ms>10000:
                 #kick client logic
+
                 con.do_i_kill_my_self = True
         time.sleep(1)
 
@@ -79,6 +81,7 @@ def handle_client(cli : Client) -> None:
         try:
             if cli.do_i_kill_myself:
                 con.send("disconnect".encode()) # ah shit ovo je kad je not responding vrv nece ni primiti ovo
+                print("Client disconnect!")
                 return
             data = con.recv(1024)
             data = data.decode()
@@ -87,6 +90,7 @@ def handle_client(cli : Client) -> None:
                 print(data)
                 cli.last_heartbeat_ms = 0
                 if data.startswith("heartbeat_received:"):
+                    print("Beat received")
                     # Znam da je ovo vec uradjeno ali ovo je da bi se
                     # Razumeo kod
                     cli.last_heartbeat_ms = 0
@@ -96,6 +100,8 @@ def handle_client(cli : Client) -> None:
 
         except Exception as e:
             print(e)
+            if "10054" in str(e):
+                return
             pass
 
 available_ids = [1]*100
@@ -116,7 +122,7 @@ threads = []
 
 
 thread_client_kicker = threading.Thread(target=client_kicker,args=[connections])
-
+thread_client_kicker.start()
 
 while True:
     server_socket.listen(5)
