@@ -5,7 +5,8 @@ import sys
 import time
 import world
 import utility
-
+import pygame
+pygame.init()
 
 world_info = world.getworld()
 
@@ -14,6 +15,8 @@ class Player:
         self.money = 0
         self.x = 0
         self.y = 0
+        self.w = 45
+        self.h = 65
         self.id = "-1"
         self.team = "na"
     def toJSON(self):
@@ -57,7 +60,7 @@ def send_all_players(connections : list[Client]):
         players.append(cli.player.toJSON())
 
 
-    json_obj = ("players:"+json.dumps(players)).encode()
+    json_obj = ("players%"+json.dumps(players)).encode()
 
     for cli in connections:
         try:
@@ -91,19 +94,64 @@ def player_sender(connections):
             print("sentt")
         except:
             pass
-        time.sleep(1)
+        time.sleep(1/60)
 
 
-def request_move(cli,args) -> None:
+def request_move(cli : Client,args) -> None:
+    global world_info
+    speed = 5
+    rect = pygame.Rect(cli.player.x,cli.player.y,cli.player.w,cli.player.h)
 
-    pass
+
+    keys = json.loads(args)
+    zidovi = world_info["walls"]
+    if keys["w"]:
+        clear = 0
+        for i in range(4):
+            zid = zidovi[i]
+            if pygame.Rect(rect.x,rect.y-speed,rect.width,rect.height).colliderect(zid) == False:
+                clear+=1
+        if clear==4:
+            cli.player.y-=speed
+            
+        
+    if keys["s"]:
+        clear = 0
+        for i in range(4):
+            zid = zidovi[i]
+            if pygame.Rect(rect.x, rect.y + speed , rect.width , rect.height).colliderect(zid) == False:
+                clear +=1
+        if clear == 4:
+            cli.player.y += speed
+        
+    if keys["d"]:
+        clear = 0
+        for i in range(4):
+            zid = zidovi[i]
+            if pygame.Rect(rect.x + speed , rect.y, rect.width , rect.height).colliderect(zid) == False:
+                clear +=1
+        if clear == 4:
+
+            cli.player.x += speed
+        
+
+    if keys["a"]:
+        clear = 0
+        for i in range(4):
+            zid = zidovi[i]
+            if pygame.Rect(rect.x -speed , rect.y , rect.width , rect.height).colliderect(zid) == False:
+                clear +=1
+        if clear == 4:
+            cli.player.x -= speed
+    return
 
 
 def send_world(cli : Client):
+    global world_info
     for i in range(len(world_info["walls"])):
         world_info["walls"][i] = utility.rect_to_list(world_info["walls"][i]) #Maybe have other stuff too?
     json_obj = json.dumps(world_info)
-    cli.con.sendall(("worlddata:"+json_obj).encode())
+    cli.con.sendall(("worlddata%"+json_obj).encode())
 
 
 def handle_client(cli : Client) -> None:
@@ -121,22 +169,22 @@ def handle_client(cli : Client) -> None:
             if data!="":
                 cli.last_heartbeat_ms = 0
                 if cli.player.team == "na":
-                    if data.startswith("set_team:"):
-                        args = data.split(":")[1]
+                    if data.startswith("set_team%"):
+                        args = data.split("%")[1]
                         if args=="bank":
                             cli.player.team="bank"
                         if args=="hero":
                             cli.player.team="hero"
                         
                 
-                elif data.startswith("heartbeat_received:"):
+                elif data.startswith("heartbeat_received%"):
                     print("Beat received")
                     # Znam da je ovo vec uradjeno ali ovo je da bi se
                     # Razumeo kod
                     cli.last_heartbeat_ms = 0
                     continue
-                if data.startswith("request_move:"):
-                    request_move(data.split(":")[1])
+                if data.startswith("request_move%"):
+                    request_move(cli,data.split("%")[1])
                 print(data)
                 
 

@@ -5,6 +5,8 @@ class Player:
     def __init__(self  , x , y,id,money):
         self.x = x
         self.y = y
+        self.w = 45
+        self.h = 65
         self.money = money
         self.speed = 5
         self.pravac = "desno"
