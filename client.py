@@ -10,7 +10,7 @@ def dictToPlayer(d):
     p1 = Player(d["x"],d["y"],d["id"],d["money"])
     p1.team = d["team"]
     return p1
-
+#haha
 
 def handle_server(client_socket):
     global players
