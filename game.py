@@ -30,6 +30,7 @@ def dictToPlayer(d):
 
 def handle_server(client_socket):
     global players
+    global zidovi
     con = client_socket
     while True:
         try:
@@ -49,7 +50,12 @@ def handle_server(client_socket):
                     for i in range(len(players2)):
                         players[i] = dictToPlayer(json.loads(players2[i]))
                         print("got players")
-
+                if data.startswith("worlddata:"):
+                    dat = data.split("worlddata:")[1]
+                    world_info = json.loads(dat)
+                    world_info["walls"] = [pygame.Rect(x, y, w, h) for x, y, w, h in world_info["walls"]]
+                    zidovi = world_info["walls"]
+                    print("got worlddata")
         except Exception as e:
             print(e)
             if "10054" in str(e) or "timed out" in str(e):
@@ -109,8 +115,9 @@ def game():
                 sys.exit()
         nacrtaj_mapu()
         for player in players:
-            player.draw(prozor)
-            print(f"Rendered player @{player.x, player.y}")
+            if type(player) == Player:
+                player.draw(prozor)
+                print(f"Rendered player @{player.x, player.y}")
         pygame.display.update()
 
         sat.tick(60)
