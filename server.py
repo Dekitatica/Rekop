@@ -101,9 +101,9 @@ def request_move(cli,args) -> None:
 
 def send_world(cli : Client):
     for i in range(len(world_info["walls"])):
-        world_info["walls"][i] = utility.rect_to_list(world_info["walls"][i])
+        world_info["walls"][i] = utility.rect_to_list(world_info["walls"][i]) #Maybe have other stuff too?
     json_obj = json.dumps(world_info)
-    cli.con.sendall(json_obj.encode())
+    cli.con.sendall(("worlddata:"+json_obj).encode())
 
 
 def handle_client(cli : Client) -> None:
@@ -172,7 +172,7 @@ while True:
 
     client_socket, client_address = server_socket.accept()
     print(f"[*] Accepted connection from {client_address[0]}:{client_address[1]}")
-
+    
     new_client = Client(Player(),client_socket)
     new_client.player.x = 100
     new_client.player.y = 100
@@ -183,7 +183,7 @@ while True:
             available_ids[i] = 0
             break
     new_client.player.id = newid
-
+    send_world(new_client)
 
 
     connections.append(new_client)
