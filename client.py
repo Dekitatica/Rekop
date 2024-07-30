@@ -6,10 +6,6 @@ import socket
 import json
 from Player import Player
 
-"""
-SERVER_HOST = '127.0.0.1'
-SERVER_PORT = 14242
-
 def dictToPlayer(d):
     p1 = Player(d["x"],d["y"],d["id"],d["money"])
     p1.team = d["team"]
@@ -42,11 +38,11 @@ def handle_server(client_socket):
             pass
 
 
-
-
+SERVER_HOST = '127.0.0.1'
+SERVER_PORT = 14242
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((SERVER_HOST, SERVER_PORT))
-"""
+
 
 thread_server_handler = threading.Thread(target=handle_server,args=[client_socket])
 thread_server_handler.start()
