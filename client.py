@@ -15,6 +15,9 @@ def handle_server(client_socket):
             data = str(data)
             if data!="":
                 print(data)
+                if data.startswith("heartbeat:"):
+                    beatid = data.split("")
+                    client_socket.sendall(f"heartbeat_received:{beatid}".encode())
 
                 
 
@@ -24,6 +27,11 @@ def handle_server(client_socket):
 
 
 
+
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((SERVER_HOST, SERVER_PORT))
 
+thread_server_handler = threading.Thread(target=handle_server,args=[client_socket])
+
+while True:
+    pass
