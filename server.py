@@ -77,6 +77,7 @@ def request_move(cli,args) -> None:
 
 def handle_client(cli : Client) -> None:
     con = cli.con
+    con.settimeout(3)
     while True:
         try:
             if cli.do_i_kill_myself:
@@ -100,7 +101,7 @@ def handle_client(cli : Client) -> None:
 
         except Exception as e:
             print(e)
-            if "10054" in str(e):
+            if "10054" in str(e) or "timed out" in str(e):
                 return
             pass
 
@@ -121,8 +122,8 @@ server_socket.bind((SERVER_HOST, SERVER_PORT))
 threads = []
 
 
-thread_client_kicker = threading.Thread(target=client_kicker,args=[connections])
-thread_client_kicker.start()
+#thread_client_kicker = threading.Thread(target=client_kicker,args=[connections])
+#thread_client_kicker.start()
 
 while True:
     server_socket.listen(5)
