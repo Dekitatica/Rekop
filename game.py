@@ -39,19 +39,19 @@ def handle_server(client_socket):
             data = str(data)
             if data != "":
                 print(data)
-                if data.startswith("heartbeat:"):
-                    beatid = data.split("")[1]
+                if data.startswith("heartbeat%"):
+                    beatid = data.split("%")[1]
                     client_socket.sendall(f"heartbeat_received:{beatid}".encode())
-                if data.startswith("players:"):
-                    dat = data.split("players:")[1]
+                if data.startswith("players%"):
+                    dat = data.split("players%")[1]
                     players2 = json.loads(dat)
                     while len(players)<len(players2):
                         players.append(0)
                     for i in range(len(players2)):
                         players[i] = dictToPlayer(json.loads(players2[i]))
                         print("got players")
-                if data.startswith("worlddata:"):
-                    dat = data.split("worlddata:")[1]
+                if data.startswith("worlddata%"):
+                    dat = data.split("worlddata%")[1]
                     world_info = json.loads(dat)
                     world_info["walls"] = [pygame.Rect(x, y, w, h) for x, y, w, h in world_info["walls"]]
                     zidovi = world_info["walls"]
@@ -113,6 +113,29 @@ def game():
             if dogadjaj.type == pygame.QUIT:
                 program_radi = False
                 sys.exit()
+        keys = pygame.key.get_pressed()
+        
+        important_keys = {
+            "w":False,
+            "s":False,
+            "a":False,
+            "d":False
+        }
+
+        if keys[pygame.K_w]:
+            important_keys["w"] = True
+        if keys[pygame.K_s]:
+            important_keys["s"] = True
+        if keys[pygame.K_a]:
+            important_keys["a"] = True
+        if keys[pygame.K_d]:
+            important_keys["d"] = True
+        for key in important_keys.keys():
+            if important_keys[key] ==True:
+                obj = json.dumps(important_keys)
+                client_socket.sendall(f"request_move%{obj}".encode())
+                break
+
         nacrtaj_mapu()
         for player in players:
             if type(player) == Player:
