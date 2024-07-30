@@ -25,9 +25,6 @@ def dictToPlayer(d):
     return p1
 
 
-# haha
-
-
 def handle_server(client_socket):
     global players
     global zidovi
@@ -45,7 +42,7 @@ def handle_server(client_socket):
                 if data.startswith("players%"):
                     dat = data.split("players%")[1]
                     players2 = json.loads(dat)
-                    while len(players)<len(players2):
+                    while len(players) < len(players2):
                         players.append(0)
                     for i in range(len(players2)):
                         players[i] = dictToPlayer(json.loads(players2[i]))
@@ -53,7 +50,9 @@ def handle_server(client_socket):
                 if data.startswith("worlddata%"):
                     dat = data.split("worlddata%")[1]
                     world_info = json.loads(dat)
-                    world_info["walls"] = [pygame.Rect(x, y, w, h) for x, y, w, h in world_info["walls"]]
+                    world_info["walls"] = [
+                        pygame.Rect(x, y, w, h) for x, y, w, h in world_info["walls"]
+                    ]
                     zidovi = world_info["walls"]
                     print("got worlddata")
         except Exception as e:
@@ -114,13 +113,8 @@ def game():
                 program_radi = False
                 sys.exit()
         keys = pygame.key.get_pressed()
-        
-        important_keys = {
-            "w":False,
-            "s":False,
-            "a":False,
-            "d":False
-        }
+
+        important_keys = {"w": False, "s": False, "a": False, "d": False}
 
         if keys[pygame.K_w]:
             important_keys["w"] = True
@@ -131,7 +125,7 @@ def game():
         if keys[pygame.K_d]:
             important_keys["d"] = True
         for key in important_keys.keys():
-            if important_keys[key] ==True:
+            if important_keys[key] == True:
                 obj = json.dumps(important_keys)
                 client_socket.sendall(f"request_move%{obj}".encode())
                 break
