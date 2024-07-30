@@ -1,6 +1,6 @@
 import pygame
 import sys
-
+from Player import player
 
 prozor = pygame.display.set_mode((1280, 720))
 sat = pygame.time.Clock()
@@ -27,8 +27,9 @@ def game():
                 program_radi = False
                 sys.exit()
         nacrtaj_mapu()
-
+        player.move()
+        player.draw(prozor)
         pygame.display.update()
-
+        
 
 game()
