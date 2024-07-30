@@ -60,7 +60,10 @@ def send_all_players(connections : list[Client]):
     json_obj = ("players:"+json.dumps(players)).encode()
 
     for cli in connections:
-        cli.con.sendall(json_obj)
+        try:
+            cli.con.sendall(json_obj)
+        except Exception as e:
+            print(e)
 
     pass
 
@@ -85,9 +88,9 @@ def player_sender(connections):
     while True:
         try:
             send_all_players(connections)
+            print("sentt")
         except:
             pass
-        print("sentt")
         time.sleep(1)
 
 
