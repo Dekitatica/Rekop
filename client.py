@@ -9,6 +9,7 @@ SERVER_PORT = 14242
 
 def dictToPlayer(d):
     p1 = Player(d["x"],d["y"],d["id"],d["money"])
+    p1.team = d["team"]
     return p1
 
 
@@ -49,7 +50,7 @@ frame_count = 0
 
 players = []
 
-
+client_socket.sendall("set_team:bank".encode())
 while True:
     if frame_count%1000==0:
         try:

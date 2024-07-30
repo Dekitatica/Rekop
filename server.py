@@ -11,6 +11,7 @@ class Player:
         self.x = 0
         self.y = 0
         self.id = "-1"
+        self.team = "na"
     def toJSON(self):
         return json.dumps(
             self,
@@ -102,9 +103,17 @@ def handle_client(cli : Client) -> None:
             data = data.decode()
             data = str(data)
             if data!="":
-                
                 cli.last_heartbeat_ms = 0
-                if data.startswith("heartbeat_received:"):
+                if cli.player.team == "na":
+                    if data.startswith("set_team:"):
+                        args = data.split(":")[1]
+                        if args=="bank":
+                            cli.player.team="bank"
+                        if args=="hero":
+                            cli.player.team="hero"
+                        
+                
+                elif data.startswith("heartbeat_received:"):
                     print("Beat received")
                     # Znam da je ovo vec uradjeno ali ovo je da bi se
                     # Razumeo kod
