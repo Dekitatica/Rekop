@@ -3,7 +3,11 @@ import threading
 import json
 import sys
 import time
+import world
+import utility
 
+
+world_info = world.getworld()
 
 class Player:
     def __init__(self) -> None:
@@ -88,7 +92,16 @@ def player_sender(connections):
 
 
 def request_move(cli,args) -> None:
+
     pass
+
+
+def send_world(cli : Client):
+    for i in range(len(world_info["walls"])):
+        world_info["walls"][i] = utility.rect_to_list(world_info["walls"][i])
+    json_obj = json.dumps(world_info)
+    cli.con.sendall(json_obj.encode())
+
 
 def handle_client(cli : Client) -> None:
     con = cli.con
@@ -136,8 +149,8 @@ kicked = []
 
 connections = []
 
-SERVER_HOST = '10.68.21.27'
-SERVER_HOST = '127.0.0.1'
+SERVER_HOST = '192.168.1.107'
+#SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 14242
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -158,6 +171,8 @@ while True:
     print(f"[*] Accepted connection from {client_address[0]}:{client_address[1]}")
 
     new_client = Client(Player(),client_socket)
+    new_client.player.x = 100
+    new_client.player.y = 100
     newid = -2
     for i in range(100):
         if available_ids[i]==1:
