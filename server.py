@@ -7,9 +7,15 @@ import sys
 
 class Player:
     def __init__(self) -> None:
-        money = 0
-        x = 0
-        y = 0
+        self.money = 0
+        self.x = 0
+        self.y = 0
+    def toJSON(self):
+        return json.dumps(
+            self,
+            default=lambda o: o.__dict__, 
+            sort_keys=True,
+            indent=4)
 
 class Hero(Player):
     def __init__(self) -> None:
@@ -24,6 +30,8 @@ class Hero(Player):
             "miner_7" : -1,
             "miner_8" : -1,
         }
+    def toJSON(self):
+        return super().toJSON()
 
 
 class AntiHero(Player):
@@ -35,8 +43,11 @@ class AntiHero(Player):
             "atm_3" : -1,
             "atm_4" : -1,
             "atm_5" : -1,
-            
+            "atm_4" : -1,
+            "atm_5" : -1,
         }
+    def toJSON(self):
+        return super().toJSON()
 
 class Client:
     def __init__(self,player : Player,con : socket.socket) -> None:
@@ -57,7 +68,7 @@ def handle_client(cli : Client) -> None:
                 print(data)
                 if data.startswith("request_move"):
                     request_move(data.split(":")[1])
-
+                
 
         except Exception as e:
             print(e)
@@ -69,7 +80,19 @@ kicked = []
 
 connections = []
 
+pl = Player()
+ah = AntiHero()
+he = Hero()
 
+objs = [pl,ah,he]
+
+for i in range(3):
+    f = open(f"file_{i}.json","w")
+    f.write(objs[i].toJSON())
+    f.close()
+
+
+exit()
 SERVER_HOST = '10.68.21.27'
 SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 14242
