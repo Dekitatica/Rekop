@@ -8,8 +8,8 @@ class Player:
         self.money = money
         self.speed = 5
         self.pravac = "desno"
-        self.txt_player_left = pygame.image.load("images\\player.png")
-        self.txt_player_right =pygame.image.load("images\\playerright.png")
+        self.txt_player_left = pygame.image.load("images//player.png")
+        self.txt_player_right =pygame.image.load("images//playerright.png")
         self.txt_player_left = pygame.transform.scale(self.txt_player_left , (45 , 65))
         self.txt_player_right = pygame.transform.scale(self.txt_player_right , (45 , 65))
         self.picture = self.txt_player_right
