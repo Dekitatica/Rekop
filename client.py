@@ -1,77 +1,66 @@
 
 
-"""
 import threading
 import sys
 import socket
 import json
+from Player import Player
 
-SERVER_HOST = '127.0.0.1'
-SERVER_PORT = 14242
+def dictToPlayer(d):
+    p1 = Player(d["x"],d["y"],d["id"],d["money"])
+    p1.team = d["team"]
+    return p1
+
 
 def handle_server(client_socket):
+    global players
     con = client_socket
     while True:
         try:
-            data = con.recv(1024)
+            data = con.recv(4096)
             data = data.decode()
             data = str(data)
             if data!="":
                 print(data)
-
-                
+                if data.startswith("heartbeat:"):
+                    beatid = data.split("")[1]
+                    client_socket.sendall(f"heartbeat_received:{beatid}".encode())
+                if data.startswith("players:"):
+                    dat = data.split("players:")[1]
+                    players = json.loads(dat)
+                    for i in range(len(players)):
+                        players[i] = dictToPlayer(json.loads(players[i]))
 
         except Exception as e:
             print(e)
+            if "10054" in str(e) or "timed out" in str(e):
+                return
             pass
 
 
-
+SERVER_HOST = '127.0.0.1'
+SERVER_PORT = 14242
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((SERVER_HOST, SERVER_PORT))
-"""
 
-import pygame
-import sys
 
-# Initialize Pygame
-pygame.init()
+thread_server_handler = threading.Thread(target=handle_server,args=[client_socket])
+thread_server_handler.start()
+frame_count = 0
 
-# Set up some constants
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 800
-ROWS = 8
-COLUMNS = 8
+players = []
 
-# Set up some colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-
-# Set up the display
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
-# Function to draw the chessboard
-def draw_chessboard():
-    square_width = SCREEN_WIDTH // COLUMNS
-    square_height = SCREEN_HEIGHT // ROWS
-
-    for row in range(ROWS):
-        for column in range(COLUMNS):
-            color = WHITE if (row + column) % 2 == 0 else BLACK
-            pygame.draw.rect(screen, color, (column * square_width, row * square_height, square_width, square_height))
-
-    # Draw the lines
-    for row in range(ROWS + 1):
-        pygame.draw.line(screen, BLACK, (0, row * square_height), (SCREEN_WIDTH, row * square_height), 2)
-    for column in range(COLUMNS + 1):
-        pygame.draw.line(screen, BLACK, (column * square_width, 0), (column * square_width, SCREEN_HEIGHT), 2)
-
-# Main loop
+client_socket.sendall("set_team:bank".encode())
 while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+    if frame_count%1000==0:
+        try:
+            client_socket.sendall("heartbeat_received".encode())
+        except Exception as e:
+            print(e)
+            if "10054" in str(e) or "timed out" in str(e):
+                break
+            pass
 
-    draw_chessboard()
-    pygame.display.flip()
+
+    frame_count+=1
+    pass

@@ -2,9 +2,10 @@ import pygame
 
 
 class Player:
-    def __init__(self  , x , y ):
+    def __init__(self  , x , y,id,money):
         self.x = x
         self.y = y
+        self.money = money
         self.speed = 5
         self.pravac = "desno"
         self.txt_player_left = pygame.image.load("images\\player.png")
@@ -12,6 +13,7 @@ class Player:
         self.txt_player_left = pygame.transform.scale(self.txt_player_left , (45 , 65))
         self.txt_player_right = pygame.transform.scale(self.txt_player_right , (45 , 65))
         self.picture = self.txt_player_right
+        self.id = id
         self.collision = False
         self.rect = pygame.Rect(self.x , self.y , 35 , 65)
     def move(self):
@@ -77,4 +79,4 @@ class Player:
         surface.blit(self.picture , (self.x , self.y))
 
 
-player = Player(50 , 50 )
+player = Player(50 , 50 ,-1,-1)
