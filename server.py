@@ -44,6 +44,22 @@ class Hero(Player):
         return super().toJSON()
 
 
+def send_all_players(connections : list[Client]):
+    players = []
+
+    for cli in connections:
+        cli.player.money+=1
+        players.append(cli.player.toJSON())
+
+
+    json_obj = ("players:"+json.dumps(players)).encode()
+
+    for cli in connections:
+        cli.con.sendall(json_obj)
+
+    pass
+
+
 class AntiHero(Player):
     def __init__(self) -> None:
         super().__init__()
@@ -60,15 +76,13 @@ class AntiHero(Player):
         return super().toJSON()
 
 
-def client_kicker(connections):
+def player_sender(connections):
     while True:
-
-        time_in_ms = round(time.time() * 1000)
-        for con in connections:
-            if con.last_heartbeat_ms-time_in_ms>10000:
-                #kick client logic
-
-                con.do_i_kill_my_self = True
+        try:
+            send_all_players(connections)
+        except:
+            pass
+        print("sentt")
         time.sleep(1)
 
 
@@ -88,15 +102,17 @@ def handle_client(cli : Client) -> None:
             data = data.decode()
             data = str(data)
             if data!="":
-                print(data)
+                
                 cli.last_heartbeat_ms = 0
                 if data.startswith("heartbeat_received:"):
                     print("Beat received")
                     # Znam da je ovo vec uradjeno ali ovo je da bi se
                     # Razumeo kod
                     cli.last_heartbeat_ms = 0
+                    continue
                 if data.startswith("request_move:"):
                     request_move(data.split(":")[1])
+                print(data)
                 
 
         except Exception as e:
@@ -122,8 +138,8 @@ server_socket.bind((SERVER_HOST, SERVER_PORT))
 threads = []
 
 
-#thread_client_kicker = threading.Thread(target=client_kicker,args=[connections])
-#thread_client_kicker.start()
+thread_client_kicker = threading.Thread(target=player_sender,args=[connections])
+thread_client_kicker.start()
 
 while True:
     server_socket.listen(5)
@@ -138,6 +154,7 @@ while True:
         if available_ids[i]==1:
             newid = i
             available_ids[i] = 0
+            break
     new_client.player.id = newid
 
 
