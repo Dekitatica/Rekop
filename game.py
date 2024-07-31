@@ -59,7 +59,7 @@ def handle_server(client_socket):
                 # print(data)
                 if data.startswith("heartbeat%"):
                     beatid = data.split("%")[1]
-                    client_socket.sendall(f"heartbeat_received:{beatid}".encode())
+                    client_socket.sendall(f"heartbeat_received:{beatid}|".encode())
                 if data.startswith("players%"):
                     dat = data.split("players%")[1]
                     players2 = json.loads(dat)
@@ -67,7 +67,7 @@ def handle_server(client_socket):
                         players.append(0)
                     for i in range(len(players2)):
                         players[i] = dictToPlayer(json.loads(players2[i]))
-                        print("got players")
+                        #print("got players")
                 if data.startswith("worlddata%"):
                     dat = data.split("worlddata%")[1]
                     world_info = json.loads(dat)
@@ -94,7 +94,7 @@ SERVER_HOST = "127.0.0.1"
 SERVER_PORT = 14242
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((SERVER_HOST, SERVER_PORT))
-
+print("Connected")
 
 thread_server_handler = threading.Thread(target=handle_server, args=[client_socket])
 thread_server_handler.start()
@@ -102,7 +102,7 @@ frame_count = 0
 
 players = []
 
-client_socket.sendall("set_team:bank".encode())
+client_socket.sendall("set_team?bank|".encode())
 
 
 def nacrtaj_mapu():
@@ -171,7 +171,8 @@ def game():
     while program_radi:
         if frame_count % 60 == 0:
             try:
-                client_socket.sendall("heartbeat_received".encode())
+                client_socket.sendall(f"heartbeat_received%{frame_count}|".encode())
+                print(f"Sent beat {selfPlayer.id}")
             except Exception as e:
                 print(e)
                 if "10054" in str(e) or "timed out" in str(e):
@@ -196,11 +197,11 @@ def game():
             important_keys["a"] = True
         if keys[pygame.K_d]:
             important_keys["d"] = True
-
+               
         for key in important_keys.keys():
             if important_keys[key] == True:
                 obj = json.dumps(important_keys)
-                client_socket.sendall(f"request_move%{obj}".encode())
+                client_socket.sendall(f"request_move%{obj}|".encode())
                 break
 
         nacrtaj_mapu()
