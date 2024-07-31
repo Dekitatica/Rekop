@@ -40,7 +40,7 @@ def handle_server(client_socket):
             data = data.decode()
             data = str(data)
             if data != "":
-                #print(data)
+                # print(data)
                 if data.startswith("heartbeat%"):
                     beatid = data.split("%")[1]
                     client_socket.sendall(f"heartbeat_received:{beatid}".encode())
@@ -105,9 +105,10 @@ def nacrtaj_mapu():
     #    pygame.draw.rect(prozor, pygame.Color("red"), zid)
 
 
-
-def change_house_layer():
-    pass
+def change_house_layer(playerrect):
+    
+    if playerrect.colliderect(pygame.Rect( 120,60 , txt_kuca.get_width() , txt_kuca.get_height())):
+        print("pipa")
 
 
 def create_transparent_rect(surface, color, rect):
@@ -118,14 +119,11 @@ def create_transparent_rect(surface, color, rect):
 
 playerRect = None
 
-def check_col():
-    pass
-
-
 
 def game():
     global toggle_fps
     global selfPlayer
+    global playerRect
     program_radi = True
     frame_count = 0
     while program_radi:
@@ -138,9 +136,10 @@ def game():
                 if "10054" in str(e) or "timed out" in str(e):
                     break
                 pass
-        if type(selfPlayer) == Player:
+        if selfPlayer != None:
             playerRect = pygame.Rect(selfPlayer.x, selfPlayer.y, 35, 65)
             print(playerRect)
+            change_house_layer(playerRect)
         frame_count += 1
         for dogadjaj in pygame.event.get():
             if dogadjaj.type == pygame.QUIT:
@@ -167,15 +166,15 @@ def game():
                 break
 
         nacrtaj_mapu()
-
+        
         for player in players:
             if type(player) == Player:
                 player.draw(prozor)
-                #print(f"Rendered player @{player.x, player.y}")
+                # print(f"Rendered player @{player.x, player.y}")
         fps_text = font.render(
             f"FPS : {round(sat.get_fps() , 0)}", False, pygame.Color("black")
         )
-        #create_transparent_rect(prozor , pygame.Color("black") , pygame.Rect(0,0,1280,720))
+        # create_transparent_rect(prozor , pygame.Color("black") , pygame.Rect(0,0,1280,720))
         prozor.blit(fps_text, (0, 0))
         pygame.display.update()
 

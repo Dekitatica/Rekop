@@ -261,9 +261,9 @@ while True:
     new_client.player.id = newid
     connections.append(new_client)
     send_all_players(connections)
-    #time.sleep(0.2)
+    time.sleep(0.2)
     new_client.con.sendall(f"id%{newid}".encode())
-    #time.sleep(0.2)
+    time.sleep(0.2)
     send_world(new_client)
     
 
