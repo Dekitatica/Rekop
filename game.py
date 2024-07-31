@@ -14,8 +14,9 @@ txt_house_floor = pygame.image.load("images//housefloor.png")
 txt_kuca = pygame.transform.scale(
     txt_kuca, (txt_kuca.get_width() * 0.69, txt_kuca.get_height() * 0.69)
 )
+font = pygame.font.Font(None , 30)
 
-
+toggle_fps = False
 zidovi = []
 
 
@@ -62,7 +63,7 @@ def handle_server(client_socket):
             pass
 
 
-SERVER_HOST = "192.168.1.107"
+SERVER_HOST = "127.0.0.1"
 SERVER_PORT = 14242
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((SERVER_HOST, SERVER_PORT))
@@ -95,6 +96,7 @@ def nacrtaj_mapu():
 
 
 def game():
+    global toggle_fps
     program_radi = True
     frame_count = 0
     while program_radi:
@@ -112,6 +114,10 @@ def game():
             if dogadjaj.type == pygame.QUIT:
                 program_radi = False
                 sys.exit()
+            
+                
+                
+            
         keys = pygame.key.get_pressed()
 
         important_keys = {"w": False, "s": False, "a": False, "d": False}
@@ -124,6 +130,10 @@ def game():
             important_keys["a"] = True
         if keys[pygame.K_d]:
             important_keys["d"] = True
+        
+    
+        
+            
         for key in important_keys.keys():
             if important_keys[key] == True:
                 obj = json.dumps(important_keys)
@@ -131,10 +141,13 @@ def game():
                 break
 
         nacrtaj_mapu()
+
         for player in players:
             if type(player) == Player:
                 player.draw(prozor)
                 print(f"Rendered player @{player.x, player.y}")
+        fps_text = font.render(f"FPS : {round(sat.get_fps() , 0)}" , False , pygame.Color("black"))
+        prozor.blit(fps_text , (0,0))
         pygame.display.update()
 
         sat.tick(60)
