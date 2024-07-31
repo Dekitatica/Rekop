@@ -242,7 +242,8 @@ thread_client_kicker = threading.Thread(target=player_sender,args=[connections])
 thread_client_kicker.start()
 
 while True:
-    server_socket.listen(5)
+    print("start")
+    server_socket.listen(10)
     print(f"[*] Listening on {SERVER_HOST}:{SERVER_PORT}")
 
     client_socket, client_address = server_socket.accept()
@@ -268,7 +269,8 @@ while True:
     
 
 
-
-    t1 = threading.Thread(target=handle_client(connections[-1]))
+    print("pre-end")
+    t1 = threading.Thread(target=handle_client,args=[connections[-1]])
     t1.start()
     threads.append(t1)
+    print("end")
