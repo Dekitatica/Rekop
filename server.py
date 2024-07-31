@@ -178,12 +178,14 @@ def earn_money_loop(clients : list[Client]):
         time.sleep(1)
 
 def handle_client(cli : Client) -> None:
+    global connections
     con = cli.con
     con.settimeout(3)
     while True:
         try:
             if cli.do_i_kill_myself:
                 con.send("disconnect".encode()) # ah shit ovo je kad je not responding vrv nece ni primiti ovo
+                del connections[connections.index(cli)]
                 print("Client disconnect!")
                 return
             data = con.recv(1024)
