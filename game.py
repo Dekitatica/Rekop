@@ -103,8 +103,7 @@ def nacrtaj_mapu():
     #    pygame.draw.rect(prozor, pygame.Color("red"), zid)
 
 def check_col():
-    global 
-    if 
+    pass
 
 
 def game():
@@ -159,7 +158,6 @@ def game():
         pygame.display.update()
 
         sat.tick(60)
-        print(sat)
 
 
 game()
