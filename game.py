@@ -26,6 +26,8 @@ def dictToPlayer(d):
     return p1
 
 
+selfPlayer = None
+
 def handle_server(client_socket):
     global players
     global zidovi
@@ -56,6 +58,12 @@ def handle_server(client_socket):
                     ]
                     zidovi = world_info["walls"]
                     print("got worlddata")
+                if data.startswith("id%"):
+                    dat = data.split("id%")
+                    for player in players:
+                        if player.id == dat[1]:
+                            selfPlayer == player
+
         except Exception as e:
             print(e)
             if "10054" in str(e) or "timed out" in str(e):
@@ -93,6 +101,10 @@ def nacrtaj_mapu():
     prozor.blit(txt_kuca, (500, 60))
     # for zid in zidovi:
     #    pygame.draw.rect(prozor, pygame.Color("red"), zid)
+
+def check_col():
+    global 
+    if 
 
 
 def game():
