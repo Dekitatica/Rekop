@@ -12,6 +12,7 @@ world_info = world.getworld()
 
 # Money per second, cost
 upgrades = {
+    "0" : [1,0],
     "1" : [5,30],
     "2" : [10,100],
     "3" : [20,850],
@@ -30,6 +31,7 @@ class Player:
         self.id = "-1"
         self.team = "na"
         self.upgrades = {
+            "0":True,
             "1":False,
             "2":False,
             "3":False,
@@ -53,19 +55,6 @@ class Client:
 
 
 
-class Hero(Player):
-    def __init__(self) -> None:
-        super().__init__()
-        self.upgrades = {
-            "miner_1" : -1,
-            "miner_2" : -1,
-            "miner_3" : -1,
-            "miner_4" : -1,
-            "miner_5" : -1
-        }
-    def toJSON(self):
-        return super().toJSON()
-
 
 def send_all_players(connections : list[Client]):
     players = []
@@ -84,19 +73,6 @@ def send_all_players(connections : list[Client]):
 
     pass
 
-
-class AntiHero(Player):
-    def __init__(self) -> None:
-        super().__init__()
-        self.upgrades = {
-            "atm_1" : -1,
-            "atm_2" : -1,
-            "atm_3" : -1,
-            "atm_4" : -1,
-            "atm_5" : -1
-        }
-    def toJSON(self):
-        return super().toJSON()
 
 
 def player_sender(connections):
@@ -173,7 +149,7 @@ def earn_money_loop(clients : list[Client]):
             money_to_give = 0
             for up in cli.player.upgrades.keys():
                 if cli.player.upgrades[up]:
-                    money_to_give+=upgrades[up]
+                    money_to_give+=upgrades[up][0]
             cli.player.money+=money_to_give*cli.player.multip
             print(f"[{cli.player.team.capitalize()}]: {cli.player.id} has {cli.player.money} coins!")
         time.sleep(1)
@@ -181,7 +157,7 @@ def earn_money_loop(clients : list[Client]):
 def handle_client(cli : Client) -> None:
     global connections
     con = cli.con
-    con.settimeout(3)
+    con.settimeout(15)
     while True:
         try:
             if cli.do_i_kill_myself:
