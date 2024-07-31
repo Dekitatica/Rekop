@@ -105,7 +105,8 @@ frame_count = 0
 players = []
 
 client_socket.sendall("set_team?bank|".encode())
-selfMinerLevel = 0
+selfMinerLevel = 1
+
 
 def nacrtaj_mapu():
     global selfPlayer
@@ -162,7 +163,7 @@ def MinersUpgradeMenu():
     create_transparent_rect(prozor, (0, 0, 0, 127), (20, 20, 1240, 680))
     nacrtaj_dugme_bez_centiranja(btn_buy_miner)
     upgrade_level_text = font_upgrade.render(
-        f"Upgrade Level : ?", False, pygame.Color("black")
+        f"Upgrade Level : {selfMinerLevel}", False, pygame.Color("black")
     )
     prozor.blit(upgrade_level_text, (80, 150))
 
@@ -178,16 +179,12 @@ def game():
         if frame_count % 60 == 0:
             try:
                 client_socket.sendall(f"heartbeat_received?{frame_count}|".encode())
-                for i in range(1,6):
-                    client_socket.sendall(f"buy_upgrade?{i}|".encode())
                 print(f"Sent beat {selfPlayer.id}")
             except Exception as e:
                 print(e)
                 if "10054" in str(e) or "timed out" in str(e):
                     break
                 pass
-        
-
 
         frame_count += 1
         for dogadjaj in pygame.event.get():
@@ -198,7 +195,7 @@ def game():
                 if btn_buy_miner.rect.collidepoint(dogadjaj.pos):
 
                     client_socket.sendall(f"buy_upgrade?{selfMinerLevel}".encode())
-                    selfMinerLevel+= 1
+                    selfMinerLevel += 1
         keys = pygame.key.get_pressed()
 
         important_keys = {"w": False, "s": False, "a": False, "d": False}
