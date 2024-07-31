@@ -10,12 +10,13 @@ pygame.init()
 
 world_info = world.getworld()
 
-
+# Money per second, cost
 upgrades = {
     "1" : [5,30],
     "2" : [10,100],
     "3" : [20,850],
-    "4" : [40,3500]
+    "4" : [40,3500],
+    "5" : [75,11000]
 }
 
 
@@ -28,6 +29,13 @@ class Player:
         self.h = 65
         self.id = "-1"
         self.team = "na"
+        self.upgrades = {
+            "1":False,
+            "2":False,
+            "3":False,
+            "4":False,
+            "5":False
+        }
         self.multip = 1.00
     def toJSON(self):
         return json.dumps(
@@ -158,17 +166,26 @@ def send_world(cli : Client):
     json_obj = json.dumps(world_info2)
     cli.con.sendall(("worlddata%"+json_obj).encode())
 
-def earn_money_loop(clients):
+def earn_money_loop(clients : list[Client]):
+    global upgrades 
     while True:
-        pass
+        for cli in clients:
+            money_to_give = 0
+            for up in cli.player.upgrades.keys():
+                if cli.player.upgrades[up]:
+                    money_to_give+=upgrades[up]
+            cli.player.money+=money_to_give*cli.player.multip
+        time.sleep(1)
 
 def handle_client(cli : Client) -> None:
+    global connections
     con = cli.con
     con.settimeout(3)
     while True:
         try:
             if cli.do_i_kill_myself:
                 con.send("disconnect".encode()) # ah shit ovo je kad je not responding vrv nece ni primiti ovo
+                del connections[connections.index(cli)]
                 print("Client disconnect!")
                 return
             data = con.recv(1024)
