@@ -69,15 +69,9 @@ def handle_server(client_socket):
                         players.append(0)
                     for i in range(len(players2)):
                         players[i] = dictToPlayer(json.loads(players2[i]))
-<<<<<<< HEAD
                         # print("got players")
-                if data.startswith("worlddata%"):
-                    dat = data.split("worlddata%")[1]
-=======
-                        #print("got players")
                 if data.startswith("worlddata?"):
                     dat = data.split("worlddata?")[1]
->>>>>>> 19c88cb07045e313eaffd6607396de0adb39ed69
                     world_info = json.loads(dat)
                     world_info["walls"] = [
                         pygame.Rect(x, y, w, h) for x, y, w, h in world_info["walls"]
