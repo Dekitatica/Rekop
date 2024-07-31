@@ -216,6 +216,7 @@ def handle_client(cli : Client) -> None:
         except Exception as e:
             print(e)
             if "10054" in str(e) or "timed out" in str(e):
+                del connections[connections.index(cli)]
                 return
             pass
 
