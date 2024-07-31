@@ -28,9 +28,11 @@ def dictToPlayer(d):
 
 selfPlayer = None
 
+
 def handle_server(client_socket):
     global players
     global zidovi
+    global selfPlayer
     con = client_socket
     while True:
         try:
@@ -62,7 +64,7 @@ def handle_server(client_socket):
                     dat = data.split("id%")
                     for player in players:
                         if player.id == dat[1]:
-                            selfPlayer == player
+                            selfPlayer = player
 
         except Exception as e:
             print(e)
@@ -102,13 +104,23 @@ def nacrtaj_mapu():
     # for zid in zidovi:
     #    pygame.draw.rect(prozor, pygame.Color("red"), zid)
 
-def check_col():
-    global 
-    if 
+
+def change_house_layer():
+    pass
+
+
+def create_transparent_rect(surface, color, rect):
+    shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
+    pygame.draw.rect(shape_surf, color, shape_surf.get_rect())
+    surface.blit(shape_surf, rect)
+
+
+playerRect = None
 
 
 def game():
     global toggle_fps
+    global selfPlayer
     program_radi = True
     frame_count = 0
     while program_radi:
@@ -120,7 +132,9 @@ def game():
                 if "10054" in str(e) or "timed out" in str(e):
                     break
                 pass
-
+        if type(selfPlayer) == Player:
+            playerRect = pygame.Rect(selfPlayer.x, selfPlayer.y, 35, 65)
+            print(playerRect)
         frame_count += 1
         for dogadjaj in pygame.event.get():
             if dogadjaj.type == pygame.QUIT:
@@ -155,6 +169,7 @@ def game():
         fps_text = font.render(
             f"FPS : {round(sat.get_fps() , 0)}", False, pygame.Color("black")
         )
+        create_transparent_rect(prozor , pygame.Color("black") , pygame.Rect(0,0,1280,720))
         prozor.blit(fps_text, (0, 0))
         pygame.display.update()
 
