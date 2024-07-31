@@ -103,7 +103,7 @@ def player_sender(connections):
     while True:
         try:
             send_all_players(connections)
-            print("sentt")
+            print(len(connections))
         except:
             pass
         time.sleep(1/60)
@@ -256,8 +256,10 @@ while True:
             newid = i
             available_ids[i] = 0
             break
+    newid = str(newid)
     new_client.player.id = newid
     send_world(new_client)
+    new_client.con.sendall(f"id%{newid}".encode())
 
 
     connections.append(new_client)
