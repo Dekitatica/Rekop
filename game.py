@@ -5,6 +5,8 @@ import json
 from Player import Player
 import pygame
 
+from menu import Dugme, nacrtaj_dugme_bez_centiranja
+
 pygame.init()
 prozor = pygame.display.set_mode((1280, 720))
 sat = pygame.time.Clock()
@@ -15,7 +17,10 @@ txt_kuca = pygame.transform.scale(
     txt_kuca, (txt_kuca.get_width() * 0.69, txt_kuca.get_height() * 0.69)
 )
 font = pygame.font.Font(None, 30)
-
+txt_house_floor = pygame.transform.scale(
+    txt_house_floor,
+    (txt_house_floor.get_width() * 0.8, txt_house_floor.get_height() * 0.8),
+)
 toggle_fps = False
 zidovi = []
 
@@ -27,12 +32,23 @@ def dictToPlayer(d):
 
 
 selfPlayer = None
+stupidlist = []
+selfid = None
+
+
+button = Dugme(
+    font.render("Upgrade Miner", True, (255, 255, 255)),
+    pygame.Rect(560, 180, 150, 60),
+    pygame.Color("black"),
+)
 
 
 def handle_server(client_socket):
     global players
     global zidovi
     global selfPlayer
+    global stupidlist
+    global selfid
     con = client_socket
     while True:
         try:
@@ -64,6 +80,7 @@ def handle_server(client_socket):
                     dat = data.split("id%")
                     for player in players:
                         if player.id == dat[1]:
+                            selfid = player.id
                             selfPlayer = player
 
         except Exception as e:
@@ -89,7 +106,9 @@ client_socket.sendall("set_team:bank".encode())
 
 
 def nacrtaj_mapu():
-
+    global selfPlayer
+    global selfid
+    global playerRect
     prozor.fill("green")
 
     """
@@ -99,16 +118,36 @@ def nacrtaj_mapu():
     
 
     """
-    prozor.blit(txt_kuca, (120, 60))
+
     prozor.blit(txt_kuca, (500, 60))
     # for zid in zidovi:
     #    pygame.draw.rect(prozor, pygame.Color("red"), zid)
+    if selfPlayer != None:
+        for player in players:
+            if player.id == selfid:
+                selfPlayer = player
+        playerRect = pygame.Rect(selfPlayer.x, selfPlayer.y, 35, 65)
+        pygame.draw.rect(prozor, pygame.Color("red"), playerRect, 5)
+        pygame.draw.rect(
+            prozor,
+            pygame.Color("red"),
+            pygame.Rect(
+                200, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6
+            ),
+            5,
+        )
+        print(playerRect)
+        change_house_layer(playerRect)
 
 
 def change_house_layer(playerrect):
-    
-    if playerrect.colliderect(pygame.Rect( 120,60 , txt_kuca.get_width() , txt_kuca.get_height())):
-        print("pipa")
+
+    if playerrect.colliderect(
+        pygame.Rect(200, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
+    ):
+        prozor.blit(txt_house_floor, (200, 130))
+    else:
+        prozor.blit(txt_kuca, (120, 60))
 
 
 def create_transparent_rect(surface, color, rect):
@@ -117,13 +156,16 @@ def create_transparent_rect(surface, color, rect):
     surface.blit(shape_surf, rect)
 
 
-playerRect = None
+def MinersUpgradeMenu():
+    create_transparent_rect(prozor, (0, 0, 0, 127), (20, 20, 1240, 680))
+    # nacrtaj_dugme_bez_centiranja(button)
 
 
 def game():
     global toggle_fps
     global selfPlayer
     global playerRect
+    global stupidlist
     program_radi = True
     frame_count = 0
     while program_radi:
@@ -135,10 +177,7 @@ def game():
                 if "10054" in str(e) or "timed out" in str(e):
                     break
                 pass
-        if selfPlayer != None:
-            playerRect = pygame.Rect(selfPlayer.x, selfPlayer.y, 35, 65)
-            print(playerRect)
-            change_house_layer(playerRect)
+
         frame_count += 1
         for dogadjaj in pygame.event.get():
             if dogadjaj.type == pygame.QUIT:
@@ -165,7 +204,7 @@ def game():
                 break
 
         nacrtaj_mapu()
-        
+
         for player in players:
             if type(player) == Player:
                 player.draw(prozor)
@@ -173,7 +212,7 @@ def game():
         fps_text = font.render(
             f"FPS : {round(sat.get_fps() , 0)}", False, pygame.Color("black")
         )
-        # create_transparent_rect(prozor , pygame.Color("black") , pygame.Rect(0,0,1280,720))
+        # MinersUpgradeMenu()
         prozor.blit(fps_text, (0, 0))
         pygame.display.update()
 

@@ -40,4 +40,6 @@ def main_menu():
         nacrtaj_dugme_bez_centiranja(main_menu_play_button)
         pygame.display.flip()
         sat.tick(30)
-main_menu()
+if __name__ == "main":
+
+    main_menu()
