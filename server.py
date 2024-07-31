@@ -12,6 +12,7 @@ world_info = world.getworld()
 
 # Money per second, cost
 upgrades = {
+    "0" : [1,0],
     "1" : [5,30],
     "2" : [10,100],
     "3" : [20,850],
@@ -30,6 +31,7 @@ class Player:
         self.id = "-1"
         self.team = "na"
         self.upgrades = {
+            "0":True,
             "1":False,
             "2":False,
             "3":False,
@@ -53,19 +55,6 @@ class Client:
 
 
 
-class Hero(Player):
-    def __init__(self) -> None:
-        super().__init__()
-        self.upgrades = {
-            "miner_1" : -1,
-            "miner_2" : -1,
-            "miner_3" : -1,
-            "miner_4" : -1,
-            "miner_5" : -1
-        }
-    def toJSON(self):
-        return super().toJSON()
-
 
 def send_all_players(connections : list[Client]):
     players = []
@@ -74,7 +63,7 @@ def send_all_players(connections : list[Client]):
         players.append(cli.player.toJSON())
 
 
-    json_obj = ("players%"+json.dumps(players)).encode()
+    json_obj = ("players?"+json.dumps(players)).encode()
 
     for cli in connections:
         try:
@@ -84,19 +73,6 @@ def send_all_players(connections : list[Client]):
 
     pass
 
-
-class AntiHero(Player):
-    def __init__(self) -> None:
-        super().__init__()
-        self.upgrades = {
-            "atm_1" : -1,
-            "atm_2" : -1,
-            "atm_3" : -1,
-            "atm_4" : -1,
-            "atm_5" : -1
-        }
-    def toJSON(self):
-        return super().toJSON()
 
 
 def player_sender(connections):
@@ -164,7 +140,7 @@ def send_world(cli : Client):
     for i in range(len(world_info["walls"])):
         world_info2["walls"].append(utility.rect_to_list(world_info["walls"][i]))  #Maybe have other stuff too?
     json_obj = json.dumps(world_info2)
-    cli.con.sendall(("worlddata%"+json_obj).encode())
+    cli.con.sendall(("worlddata?"+json_obj).encode())
 
 def earn_money_loop(clients : list[Client]):
     global upgrades 
@@ -173,15 +149,22 @@ def earn_money_loop(clients : list[Client]):
             money_to_give = 0
             for up in cli.player.upgrades.keys():
                 if cli.player.upgrades[up]:
-                    money_to_give+=upgrades[up]
+                    money_to_give+=upgrades[up][0]
             cli.player.money+=money_to_give*cli.player.multip
             print(f"[{cli.player.team.capitalize()}]: {cli.player.id} has {cli.player.money} coins!")
         time.sleep(1)
 
+def buy_upgrade(cli : Client,upgrade_id):
+    if cli.player.money >= upgrades[upgrade_id][1]:
+        cli.player.money-= upgrades[upgrade_id][1]
+        cli.player.upgrades[upgrade_id] = True
+
+
+
 def handle_client(cli : Client) -> None:
     global connections
     con = cli.con
-    con.settimeout(3)
+    con.settimeout(15)
     while True:
         try:
             if cli.do_i_kill_myself:
@@ -208,13 +191,10 @@ def handle_client(cli : Client) -> None:
                     
                     elif data.startswith("heartbeat_received"):
                         print(f"{cli.player.id} Beat received")
-                        # Znam da je ovo vec uradjeno ali ovo je da bi se
-                        # Razumeo kod
-                        cli.last_heartbeat_ms = 0
-                        continue
-                    if data.startswith("request_move%"):
-                        request_move(cli,data.split("%")[1])
-                
+                    if data.startswith("request_move?"):
+                        request_move(cli,data.split("?")[1])
+                    if data.startswith("buy_upgrade?"):
+                        buy_upgrade(cli,data.split("?")[1])
                 
 
         except Exception as e:
@@ -269,7 +249,7 @@ while True:
     connections.append(new_client)
     send_all_players(connections)
     time.sleep(0.2)
-    new_client.con.sendall(f"id%{newid}".encode())
+    new_client.con.sendall(f"id?{newid}".encode())
     time.sleep(0.2)
     send_world(new_client)
     

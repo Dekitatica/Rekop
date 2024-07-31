@@ -59,27 +59,33 @@ def handle_server(client_socket):
             data = str(data)
             if data != "":
                 # print(data)
-                if data.startswith("heartbeat%"):
-                    beatid = data.split("%")[1]
+                if data.startswith("heartbeat?"):
+                    beatid = data.split("?")[1]
                     client_socket.sendall(f"heartbeat_received:{beatid}|".encode())
-                if data.startswith("players%"):
-                    dat = data.split("players%")[1]
+                if data.startswith("players?"):
+                    dat = data.split("players?")[1]
                     players2 = json.loads(dat)
                     while len(players) < len(players2):
                         players.append(0)
                     for i in range(len(players2)):
                         players[i] = dictToPlayer(json.loads(players2[i]))
+<<<<<<< HEAD
                         # print("got players")
                 if data.startswith("worlddata%"):
                     dat = data.split("worlddata%")[1]
+=======
+                        #print("got players")
+                if data.startswith("worlddata?"):
+                    dat = data.split("worlddata?")[1]
+>>>>>>> 19c88cb07045e313eaffd6607396de0adb39ed69
                     world_info = json.loads(dat)
                     world_info["walls"] = [
                         pygame.Rect(x, y, w, h) for x, y, w, h in world_info["walls"]
                     ]
                     zidovi = world_info["walls"]
                     print("got worlddata")
-                if data.startswith("id%"):
-                    dat = data.split("id%")
+                if data.startswith("id?"):
+                    dat = data.split("id?")
                     for player in players:
                         if player.id == dat[1]:
                             selfid = player.id
@@ -177,7 +183,7 @@ def game():
     while program_radi:
         if frame_count % 60 == 0:
             try:
-                client_socket.sendall(f"heartbeat_received%{frame_count}|".encode())
+                client_socket.sendall(f"heartbeat_received?{frame_count}|".encode())
                 print(f"Sent beat {selfPlayer.id}")
             except Exception as e:
                 print(e)
@@ -207,7 +213,7 @@ def game():
         for key in important_keys.keys():
             if important_keys[key] == True:
                 obj = json.dumps(important_keys)
-                client_socket.sendall(f"request_move%{obj}|".encode())
+                client_socket.sendall(f"request_move?{obj}|".encode())
                 break
 
         nacrtaj_mapu()
