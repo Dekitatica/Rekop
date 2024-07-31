@@ -114,9 +114,7 @@ def game():
             if dogadjaj.type == pygame.QUIT:
                 program_radi = False
                 sys.exit()
-            if dogadjaj.type == pygame.KEYDOWN:
-                if dogadjaj.key == pygame.K_F1:
-                    toggle_fps = not toggle_fps
+            
                 
                 
             
@@ -133,9 +131,8 @@ def game():
         if keys[pygame.K_d]:
             important_keys["d"] = True
         
-        if toggle_fps:
-            fps_text = font.render(f"FPS : {sat.get_fps()}" , False , pygame.Color("black"))
-            prozor.blit(fps_text , (0,0))
+    
+        
             
         for key in important_keys.keys():
             if important_keys[key] == True:
@@ -144,10 +141,13 @@ def game():
                 break
 
         nacrtaj_mapu()
+
         for player in players:
             if type(player) == Player:
                 player.draw(prozor)
                 print(f"Rendered player @{player.x, player.y}")
+        fps_text = font.render(f"FPS : {round(sat.get_fps() , 0)}" , False , pygame.Color("black"))
+        prozor.blit(fps_text , (0,0))
         pygame.display.update()
 
         sat.tick(60)

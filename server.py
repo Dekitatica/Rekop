@@ -152,14 +152,15 @@ def request_move(cli : Client,args) -> None:
 
 def send_world(cli : Client):
     global world_info
+    world_info2 = {"walls":[]}
     for i in range(len(world_info["walls"])):
-        world_info["walls"][i] = utility.list_to_rect(world_info["walls"][i]) #Maybe have other stuff too?
-    json_obj = json.dumps(world_info)
+        world_info2["walls"].append(utility.rect_to_list(world_info["walls"][i]))  #Maybe have other stuff too?
+    json_obj = json.dumps(world_info2)
     cli.con.sendall(("worlddata%"+json_obj).encode())
 
 def earn_money_loop(clients):
     while True:
-
+        pass
 
 def handle_client(cli : Client) -> None:
     con = cli.con
