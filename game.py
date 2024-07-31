@@ -21,7 +21,7 @@ txt_house_floor = pygame.transform.scale(
     txt_house_floor,
     (txt_house_floor.get_width() * 0.8, txt_house_floor.get_height() * 0.8),
 )
-toggle_fps = False
+
 zidovi = []
 
 
@@ -35,10 +35,12 @@ selfPlayer = None
 stupidlist = []
 selfid = None
 
+font_upgrade = pygame.font.Font(None, 60)
 
-button = Dugme(
-    font.render("Upgrade Miner", True, (255, 255, 255)),
-    pygame.Rect(560, 180, 150, 60),
+
+btn_buy_miner = Dugme(
+    font_upgrade.render("Upgrade Miner", True, (255, 255, 255)),
+    pygame.Rect(460, 550, 320, 60),
     pygame.Color("black"),
 )
 
@@ -67,7 +69,7 @@ def handle_server(client_socket):
                         players.append(0)
                     for i in range(len(players2)):
                         players[i] = dictToPlayer(json.loads(players2[i]))
-                        #print("got players")
+                        # print("got players")
                 if data.startswith("worlddata%"):
                     dat = data.split("worlddata%")[1]
                     world_info = json.loads(dat)
@@ -158,11 +160,15 @@ def create_transparent_rect(surface, color, rect):
 
 def MinersUpgradeMenu():
     create_transparent_rect(prozor, (0, 0, 0, 127), (20, 20, 1240, 680))
-    # nacrtaj_dugme_bez_centiranja(button)
+    nacrtaj_dugme_bez_centiranja(btn_buy_miner)
+    upgrade_level_text = font_upgrade.render(
+        f"Upgrade Level : ?", False, pygame.Color("black")
+    )
+    prozor.blit(upgrade_level_text, (80, 150))
 
 
 def game():
-    global toggle_fps
+
     global selfPlayer
     global playerRect
     global stupidlist
@@ -197,7 +203,7 @@ def game():
             important_keys["a"] = True
         if keys[pygame.K_d]:
             important_keys["d"] = True
-               
+
         for key in important_keys.keys():
             if important_keys[key] == True:
                 obj = json.dumps(important_keys)
@@ -213,7 +219,7 @@ def game():
         fps_text = font.render(
             f"FPS : {round(sat.get_fps() , 0)}", False, pygame.Color("black")
         )
-        # MinersUpgradeMenu()
+        MinersUpgradeMenu()
         prozor.blit(fps_text, (0, 0))
         pygame.display.update()
 
