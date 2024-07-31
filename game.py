@@ -43,7 +43,7 @@ def handle_server(client_socket):
                 # print(data)
                 if data.startswith("heartbeat%"):
                     beatid = data.split("%")[1]
-                    client_socket.sendall(f"heartbeat_received:{beatid}".encode())
+                    client_socket.sendall(f"heartbeat_received:{beatid}|".encode())
                 if data.startswith("players%"):
                     dat = data.split("players%")[1]
                     players2 = json.loads(dat)
@@ -85,7 +85,7 @@ frame_count = 0
 
 players = []
 
-client_socket.sendall("set_team%bank".encode())
+client_socket.sendall("set_team?bank|".encode())
 
 
 def nacrtaj_mapu():
@@ -129,7 +129,7 @@ def game():
     while program_radi:
         if frame_count % 60 == 0:
             try:
-                client_socket.sendall(f"heartbeat_received%{frame_count}".encode())
+                client_socket.sendall(f"heartbeat_received%{frame_count}|".encode())
                 print(f"Sent beat {selfPlayer.id}")
             except Exception as e:
                 print(e)
@@ -158,11 +158,11 @@ def game():
             important_keys["a"] = True
         if keys[pygame.K_d]:
             important_keys["d"] = True
-
+               
         for key in important_keys.keys():
             if important_keys[key] == True:
                 obj = json.dumps(important_keys)
-                client_socket.sendall(f"request_move%{obj}".encode())
+                client_socket.sendall(f"request_move%{obj}|".encode())
                 break
 
         nacrtaj_mapu()

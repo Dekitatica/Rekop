@@ -175,6 +175,7 @@ def earn_money_loop(clients : list[Client]):
                 if cli.player.upgrades[up]:
                     money_to_give+=upgrades[up]
             cli.player.money+=money_to_give*cli.player.multip
+            print(f"[{cli.player.team.capitalize()}]: {cli.player.id} has {cli.player.money} coins!")
         time.sleep(1)
 
 def handle_client(cli : Client) -> None:
@@ -192,25 +193,27 @@ def handle_client(cli : Client) -> None:
             data = data.decode()
             data = str(data)
             if data!="":
+                data2 = data.split("|")
                 #print(data)
-                cli.last_heartbeat_ms = 0
-                if cli.player.team == "na":
-                    if data.startswith("set_team%"):
-                        args = data.split("%")[1]
-                        if args=="bank":
-                            cli.player.team="bank"
-                        if args=="hero":
-                            cli.player.team="hero"
-                        
-                
-                elif data.startswith("heartbeat_received"):
-                    print(f"{cli.player.id} Beat received")
-                    # Znam da je ovo vec uradjeno ali ovo je da bi se
-                    # Razumeo kod
+                for data in data2:
                     cli.last_heartbeat_ms = 0
-                    continue
-                if data.startswith("request_move%"):
-                    request_move(cli,data.split("%")[1])
+                    if cli.player.team == "na":
+                        if data.startswith("set_team?"):
+                            args = data.split("?")[1]
+                            if args=="bank":
+                                cli.player.team="bank"
+                            if args=="hero":
+                                cli.player.team="hero"
+                            
+                    
+                    elif data.startswith("heartbeat_received"):
+                        print(f"{cli.player.id} Beat received")
+                        # Znam da je ovo vec uradjeno ali ovo je da bi se
+                        # Razumeo kod
+                        cli.last_heartbeat_ms = 0
+                        continue
+                    if data.startswith("request_move%"):
+                        request_move(cli,data.split("%")[1])
                 
                 
 
@@ -240,6 +243,9 @@ threads = []
 
 thread_client_kicker = threading.Thread(target=player_sender,args=[connections])
 thread_client_kicker.start()
+
+thread_money_giver = threading.Thread(target=earn_money_loop,args=[connections])
+thread_money_giver.start()
 
 while True:
     print("start")
