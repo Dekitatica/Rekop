@@ -61,7 +61,7 @@ def handle_server(client_socket):
                 if data.startswith("id%"):
                     dat = data.split("id%")
                     for player in players:
-                        if player.id == dat:
+                        if player.id == dat[1]:
                             selfPlayer == player
 
         except Exception as e:
