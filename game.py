@@ -105,7 +105,7 @@ frame_count = 0
 players = []
 
 client_socket.sendall("set_team?bank|".encode())
-
+selfMinerLevel = 0
 
 def nacrtaj_mapu():
     global selfPlayer
@@ -168,7 +168,7 @@ def MinersUpgradeMenu():
 
 
 def game():
-
+    global selfMinerLevel
     global selfPlayer
     global playerRect
     global stupidlist
@@ -194,7 +194,11 @@ def game():
             if dogadjaj.type == pygame.QUIT:
                 program_radi = False
                 sys.exit()
+            if dogadjaj.type == pygame.MOUSEBUTTONDOWN:
+                if btn_buy_miner.rect.collidepoint(dogadjaj.pos):
 
+                    client_socket.sendall(f"buy_upgrade?{selfMinerLevel}".encode())
+                    selfMinerLevel+= 1
         keys = pygame.key.get_pressed()
 
         important_keys = {"w": False, "s": False, "a": False, "d": False}
