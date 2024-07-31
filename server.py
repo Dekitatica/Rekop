@@ -155,7 +155,7 @@ def earn_money_loop(clients : list[Client]):
         time.sleep(1)
 
 def buy_upgrade(cli : Client,upgrade_id):
-    if cli.player.money >= upgrades[upgrade_id][1]:
+    if cli.player.money >= upgrades[upgrade_id][1] and cli.player.upgrades[upgrade_id] == False:
         cli.player.money-= upgrades[upgrade_id][1]
         cli.player.upgrades[upgrade_id] = True
 

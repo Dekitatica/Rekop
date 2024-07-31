@@ -178,12 +178,16 @@ def game():
         if frame_count % 60 == 0:
             try:
                 client_socket.sendall(f"heartbeat_received?{frame_count}|".encode())
+                for i in range(1,6):
+                    client_socket.sendall(f"buy_upgrade?{i}|".encode())
                 print(f"Sent beat {selfPlayer.id}")
             except Exception as e:
                 print(e)
                 if "10054" in str(e) or "timed out" in str(e):
                     break
                 pass
+        
+
 
         frame_count += 1
         for dogadjaj in pygame.event.get():
