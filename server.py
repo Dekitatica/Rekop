@@ -192,6 +192,7 @@ def handle_client(cli : Client) -> None:
             data = data.decode()
             data = str(data)
             if data!="":
+                #print(data)
                 cli.last_heartbeat_ms = 0
                 if cli.player.team == "na":
                     if data.startswith("set_team%"):
@@ -202,15 +203,15 @@ def handle_client(cli : Client) -> None:
                             cli.player.team="hero"
                         
                 
-                elif data.startswith("heartbeat_received%"):
-                    print("Beat received")
+                elif data.startswith("heartbeat_received"):
+                    print(f"{cli.player.id} Beat received")
                     # Znam da je ovo vec uradjeno ali ovo je da bi se
                     # Razumeo kod
                     cli.last_heartbeat_ms = 0
                     continue
                 if data.startswith("request_move%"):
                     request_move(cli,data.split("%")[1])
-                print(data)
+                
                 
 
         except Exception as e:

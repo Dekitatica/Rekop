@@ -40,7 +40,7 @@ def handle_server(client_socket):
             data = data.decode()
             data = str(data)
             if data != "":
-                print(data)
+                #print(data)
                 if data.startswith("heartbeat%"):
                     beatid = data.split("%")[1]
                     client_socket.sendall(f"heartbeat_received:{beatid}".encode())
@@ -51,7 +51,7 @@ def handle_server(client_socket):
                         players.append(0)
                     for i in range(len(players2)):
                         players[i] = dictToPlayer(json.loads(players2[i]))
-                        print("got players")
+                        #print("got players")
                 if data.startswith("worlddata%"):
                     dat = data.split("worlddata%")[1]
                     world_info = json.loads(dat)
@@ -77,7 +77,7 @@ SERVER_HOST = "127.0.0.1"
 SERVER_PORT = 14242
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((SERVER_HOST, SERVER_PORT))
-
+print("Connected")
 
 thread_server_handler = threading.Thread(target=handle_server, args=[client_socket])
 thread_server_handler.start()
@@ -85,7 +85,7 @@ frame_count = 0
 
 players = []
 
-client_socket.sendall("set_team:bank".encode())
+client_socket.sendall("set_team%bank".encode())
 
 
 def nacrtaj_mapu():
@@ -131,7 +131,8 @@ def game():
     while program_radi:
         if frame_count % 60 == 0:
             try:
-                client_socket.sendall("heartbeat_received".encode())
+                client_socket.sendall(f"heartbeat_received%{frame_count}".encode())
+                print(f"Sent beat {selfPlayer.id}")
             except Exception as e:
                 print(e)
                 if "10054" in str(e) or "timed out" in str(e):
@@ -170,11 +171,11 @@ def game():
         for player in players:
             if type(player) == Player:
                 player.draw(prozor)
-                print(f"Rendered player @{player.x, player.y}")
+                #print(f"Rendered player @{player.x, player.y}")
         fps_text = font.render(
             f"FPS : {round(sat.get_fps() , 0)}", False, pygame.Color("black")
         )
-        create_transparent_rect(prozor , pygame.Color("black") , pygame.Rect(0,0,1280,720))
+        #create_transparent_rect(prozor , pygame.Color("black") , pygame.Rect(0,0,1280,720))
         prozor.blit(fps_text, (0, 0))
         pygame.display.update()
 
