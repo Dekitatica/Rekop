@@ -200,8 +200,8 @@ kicked = []
 
 connections = []
 
-SERVER_HOST = '192.168.1.107'
-#SERVER_HOST = '127.0.0.1'
+#SERVER_HOST = '192.168.1.107'
+SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 14242
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
