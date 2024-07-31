@@ -10,6 +10,15 @@ pygame.init()
 
 world_info = world.getworld()
 
+
+upgrades = {
+    "1" : [5,30],
+    "2" : [10,100],
+    "3" : [20,850],
+    "4" : [40,3500]
+}
+
+
 class Player:
     def __init__(self) -> None:
         self.money = 0
@@ -19,6 +28,7 @@ class Player:
         self.h = 65
         self.id = "-1"
         self.team = "na"
+        self.multip = 1.00
     def toJSON(self):
         return json.dumps(
             self,
@@ -43,10 +53,7 @@ class Hero(Player):
             "miner_2" : -1,
             "miner_3" : -1,
             "miner_4" : -1,
-            "miner_5" : -1,
-            "miner_6" : -1,
-            "miner_7" : -1,
-            "miner_8" : -1,
+            "miner_5" : -1
         }
     def toJSON(self):
         return super().toJSON()
@@ -56,7 +63,6 @@ def send_all_players(connections : list[Client]):
     players = []
 
     for cli in connections:
-        cli.player.money+=1
         players.append(cli.player.toJSON())
 
 
@@ -79,9 +85,7 @@ class AntiHero(Player):
             "atm_2" : -1,
             "atm_3" : -1,
             "atm_4" : -1,
-            "atm_5" : -1,
-            "atm_4" : -1,
-            "atm_5" : -1,
+            "atm_5" : -1
         }
     def toJSON(self):
         return super().toJSON()
@@ -149,9 +153,12 @@ def request_move(cli : Client,args) -> None:
 def send_world(cli : Client):
     global world_info
     for i in range(len(world_info["walls"])):
-        world_info["walls"][i] = utility.rect_to_list(world_info["walls"][i]) #Maybe have other stuff too?
+        world_info["walls"][i] = utility.list_to_rect(world_info["walls"][i]) #Maybe have other stuff too?
     json_obj = json.dumps(world_info)
     cli.con.sendall(("worlddata%"+json_obj).encode())
+
+def earn_money_loop(clients):
+    while True:
 
 
 def handle_client(cli : Client) -> None:
