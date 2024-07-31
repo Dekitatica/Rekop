@@ -104,6 +104,7 @@ def nacrtaj_mapu():
     # for zid in zidovi:
     #    pygame.draw.rect(prozor, pygame.Color("red"), zid)
 
+<<<<<<< HEAD
 
 def change_house_layer():
     pass
@@ -116,6 +117,10 @@ def create_transparent_rect(surface, color, rect):
 
 
 playerRect = None
+=======
+def check_col():
+    pass
+>>>>>>> cf5852c20ca7c5bc0844cc9483bf5840f83aade7
 
 
 def game():
@@ -174,7 +179,6 @@ def game():
         pygame.display.update()
 
         sat.tick(60)
-        print(sat)
 
 
 game()

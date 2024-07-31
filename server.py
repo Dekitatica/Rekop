@@ -103,7 +103,7 @@ def player_sender(connections):
     while True:
         try:
             send_all_players(connections)
-            print(len(connections))
+            #print(len(connections))
         except:
             pass
         time.sleep(1/60)
@@ -258,11 +258,16 @@ while True:
             break
     newid = str(newid)
     new_client.player.id = newid
-    send_world(new_client)
-    new_client.con.sendall(f"id%{newid}".encode())
-
-
     connections.append(new_client)
+    send_all_players(connections)
+    #time.sleep(0.2)
+    new_client.con.sendall(f"id%{newid}".encode())
+    #time.sleep(0.2)
+    send_world(new_client)
+    
+
+
+
     t1 = threading.Thread(target=handle_client(connections[-1]))
     t1.start()
     threads.append(t1)
