@@ -29,6 +29,7 @@ class Team:
         self.name = id
         self.members = []
         self.multip = 1.00
+        self.latest_upgrade = "0"
         self.upgrades = {
             "0" : True,
             "1" : False,
