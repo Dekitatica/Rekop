@@ -230,11 +230,14 @@ def handle_client(cli : Client) -> None:
                                 cli.player.team="bank"
                                 if cli.player.id not in team_bank.members:
                                     team_bank.members.append(cli.player.id)
+                                    cli.player.x = 600
+                                    cli.player.y = 400
                             if args=="hero":
                                 cli.player.team="hero"
                                 if cli.player.id not in team_hero.members:
                                     team_hero.members.append(cli.player.id)
-                            
+                                    cli.player.x = 100
+                                    cli.player.y = 100
                     
                     elif data.startswith("heartbeat_received"):
                         print(f"{cli.player.id} Beat received")
@@ -251,7 +254,7 @@ def handle_client(cli : Client) -> None:
                 return
             pass
 
-if __name__=="main":
+if __name__=="__main__":
 
     available_ids = [1]*100
 
@@ -285,8 +288,8 @@ if __name__=="main":
         print(f"[*] Accepted connection from {client_address[0]}:{client_address[1]}")
         
         new_client = Client(Player(),client_socket)
-        new_client.player.x = 100
-        new_client.player.y = 100
+        new_client.player.x = -100
+        new_client.player.y = -100
         newid = -2
         for i in range(100):
             if available_ids[i]==1:
