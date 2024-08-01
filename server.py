@@ -182,10 +182,15 @@ def earn_money_loop(teams : list[Client]):
                 print(f"[{team.name.capitalize()}]: {team.money} coins!")
         time.sleep(1)
 
-def buy_upgrade(cli : Client,upgrade_id):
-    if teams_dict[cli.player.team].money >= upgrades[upgrade_id][1] and teams_dict[cli.player.team].upgrades[upgrade_id] == False:
+def buy_upgrade(cli : Client):
+    upgrade_id = "-1"
+    for key in teams_dict[cli.player.team].upgrades:
+        if teams_dict[cli.player.team].upgrades[key] == False:
+            upgrade_id = key
+    if teams_dict[cli.player.team].money >= upgrades[upgrade_id][1] and teams_dict[cli.player.team].upgrades[upgrade_id] == False and upgrade_id!="-1":
         teams_dict[cli.player.team].money-= upgrades[upgrade_id][1]
         teams_dict[cli.player.team].upgrades[upgrade_id] = True
+        teams_dict[cli.player.team].latest_upgrade = upgrade_id
 
 def send_all_teams(clients : list[Client]):
     json_obj = json.dumps(teams_dict)
@@ -229,7 +234,7 @@ def handle_client(cli : Client) -> None:
                     if data.startswith("request_move?"):
                         request_move(cli,data.split("?")[1])
                     if data.startswith("buy_upgrade?"):
-                        buy_upgrade(cli,data.split("?")[1])
+                        buy_upgrade(cli)
                 
 
         except Exception as e:

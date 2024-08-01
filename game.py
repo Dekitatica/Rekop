@@ -33,7 +33,7 @@ def dictToPlayer(d):
 selfPlayer = None
 stupidlist = []
 selfid = None
-
+team = "nah"
 font_upgrade = pygame.font.Font(None, 60)
 
 
@@ -123,6 +123,7 @@ main_menu_play_button = Dugme(
     pygame.Color("black"),
 )
 miners_team_button = Dugme(dugme_font.render("Miner" , True, (255,255,255)), pygame.Rect(100 , 270 , 245 , 60) , pygame.Color("black"))
+bank_team_button = Dugme(dugme_font.render("Bank" , True, (255,255,255)), pygame.Rect(750 , 270 , 245 , 60) , pygame.Color("black"))
 
 
 
@@ -201,6 +202,7 @@ def MinersUpgradeMenu():
     prozor.blit(upgrade_level_text, (80, 150))
 
 def team_selector():
+    global team
     program_radi = True
     while program_radi:
         for dogadjaj in pygame.event.get():
@@ -209,10 +211,16 @@ def team_selector():
                 quit()
             if dogadjaj.type == pygame.MOUSEBUTTONDOWN:
                 if miners_team_button.rect.collidepoint(dogadjaj.pos):
+                    team = "hero"
                     game()
+                if bank_team_button.rect.collidepoint(dogadjaj.pos):
+                    team = "bank"
+                    game()
+                
 
         prozor.fill(pygame.Color("cyan"))
         nacrtaj_dugme_bez_centiranja(miners_team_button)
+        nacrtaj_dugme_bez_centiranja(bank_team_button)
         pygame.display.update()
 
 def game():
@@ -220,6 +228,7 @@ def game():
     global selfPlayer
     global playerRect
     global stupidlist
+    global team
     program_radi = True
     frame_count = 0
     SERVER_HOST = "127.0.0.1"
@@ -234,7 +243,7 @@ def game():
 
 
 
-    client_socket.sendall("set_team?bank|".encode())
+    client_socket.sendall(f"set_team?{team}|".encode())
     while program_radi:
         if frame_count % 60 == 0:
             try:
@@ -254,7 +263,7 @@ def game():
             if dogadjaj.type == pygame.MOUSEBUTTONDOWN:
                 if btn_buy_miner.rect.collidepoint(dogadjaj.pos):
 
-                    client_socket.sendall(f"buy_upgrade?{selfMinerLevel}".encode())
+                    client_socket.sendall(f"buy_upgrade?".encode())
                     selfMinerLevel += 1
         keys = pygame.key.get_pressed()
 
