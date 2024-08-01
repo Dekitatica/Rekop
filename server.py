@@ -27,6 +27,7 @@ class Team:
         self.name = id
         self.members = []
         self.multip = 1.00
+        self.latest_upgrade = "0"
         self.upgrades = {
             "0" : True,
             "1" : False,
@@ -251,7 +252,7 @@ def handle_client(cli : Client) -> None:
                 return
             pass
 
-if __name__=="main":
+if __name__=="__main__":
 
     available_ids = [1]*100
 

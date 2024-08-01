@@ -12,6 +12,10 @@ sat = pygame.time.Clock()
 txt_trava = pygame.image.load("images//grass.png")
 txt_kuca = pygame.image.load("images//kuca.png")
 txt_house_floor = pygame.image.load("images//housefloor.png")
+txt_bank = pygame.image.load("images//bank.png")
+
+
+txt_laptop = pygame.image.load("images//imageedit_2_6652470183.png")
 txt_kuca = pygame.transform.scale(
     txt_kuca, (txt_kuca.get_width() * 0.69, txt_kuca.get_height() * 0.69)
 )
@@ -29,6 +33,7 @@ def dictToPlayer(d):
     p1.team = d["team"]
     return p1
 
+
 def dictToTeam(d):
     t1 = server.Team(d["name"])
     t1.money = int(d["money"])
@@ -36,6 +41,7 @@ def dictToTeam(d):
     t1.upgrades = d["upgrades"]
     t1.multip = d["multip"]
     return t1
+
 
 selfPlayer = None
 stupidlist = []
@@ -63,6 +69,8 @@ btn_buy_miner = Dugme(
 )
 
 teams_dict = {}
+
+
 def handle_server(client_socket):
     global players
     global zidovi
@@ -110,12 +118,13 @@ def handle_server(client_socket):
                     teams_dict["hero"] = dictToTeam(json.loads(dat["hero"]))
                     a = 5
 
-
         except Exception as e:
             print(e)
             if "10054" in str(e) or "timed out" in str(e):
                 return
             pass
+
+
 dugme_font = pygame.font.SysFont("Consolas", 60)
 main_menu_dugme_quit = Dugme(
     dugme_font.render("EXIT", True, (255, 255, 255)),
@@ -137,18 +146,21 @@ main_menu_play_button = Dugme(
     pygame.Rect(560, 180, 150, 60),
     pygame.Color("black"),
 )
-miners_team_button = Dugme(dugme_font.render("Miner" , True, (255,255,255)), pygame.Rect(100 , 270 , 245 , 60) , pygame.Color("black"))
-bank_team_button = Dugme(dugme_font.render("Bank" , True, (255,255,255)), pygame.Rect(750 , 270 , 245 , 60) , pygame.Color("black"))
-
-
-
+miners_team_button = Dugme(
+    dugme_font.render("Miner", True, (255, 255, 255)),
+    pygame.Rect(100, 270, 245, 60),
+    pygame.Color("black"),
+)
+bank_team_button = Dugme(
+    dugme_font.render("Bank", True, (255, 255, 255)),
+    pygame.Rect(750, 270, 245, 60),
+    pygame.Color("black"),
+)
 
 
 selfMinerLevel = 1
 
 players = []
-
-
 
 
 def nacrtaj_mapu():
@@ -162,10 +174,9 @@ def nacrtaj_mapu():
         for j in range(4):
             prozor.blit(txt_trava, (j * 320, i * 320))
     
-
     """
 
-    prozor.blit(txt_kuca, (500, 60))
+    # prozor.blit(txt_kuca, (500, 60))
     # for zid in zidovi:
     #    pygame.draw.rect(prozor, pygame.Color("red"), zid)
     if selfPlayer != None:
@@ -176,18 +187,18 @@ def nacrtaj_mapu():
             except Exception as e:
                 print(f"RARE: Type Error (~170)")
             playerRect = pygame.Rect(selfPlayer.x, selfPlayer.y, 35, 65)
-        pygame.draw.rect(prozor, pygame.Color("red"), playerRect, 5)
-        pygame.draw.rect(
-            prozor,
-            pygame.Color("red"),
-            pygame.Rect(
-                200, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6
-            ),
-            5,
-        )
+        #pygame.draw.rect(prozor, pygame.Color("red"), playerRect, 5)
+        #pygame.draw.rect(
+        #    prozor,
+        #    pygame.Color("red"),
+        #    pygame.Rect(
+         #       200, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6
+        #    ),
+        #    5,
+       # )
 
-        for zid in zidovi:
-            pygame.draw.rect(prozor, pygame.Color("red"), zid)
+        #for zid in zidovi:
+        #    pygame.draw.rect(prozor, pygame.Color("red"), zid)
 
         change_house_layer(playerRect)
 
@@ -200,8 +211,13 @@ def change_house_layer(playerrect):
         prozor.blit(txt_house_floor, (200, 130))
     else:
         prozor.blit(txt_kuca, (120, 60))
+    if playerrect.colliderect(
+        pygame.Rect(580 , 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
+    ):
+        prozor.blit(txt_house_floor, (580 , 130))
 
-    
+    else:
+        prozor.blit(txt_kuca, (500, 60))
 
 
 def create_transparent_rect(surface, color, rect):
@@ -213,10 +229,14 @@ def create_transparent_rect(surface, color, rect):
 def MinersUpgradeMenu():
     create_transparent_rect(prozor, (0, 0, 0, 127), (20, 20, 1240, 680))
     nacrtaj_dugme_bez_centiranja(btn_buy_miner)
-    upgrade_level_text = font_upgrade.render(
-        f"Upgrade Level : {selfMinerLevel}", False, pygame.Color("black")
-    )
-    prozor.blit(upgrade_level_text, (80, 150))
+    if teams_dict != None and selfPlayer != None and selfPlayer.team != "na":
+        upgrade_level_text = font_upgrade.render(
+            f"Upgrade Level : {teams_dict[selfPlayer.team].latest_upgrade}",
+            False,
+            pygame.Color("black"),
+        )
+        prozor.blit(upgrade_level_text, (80, 150))
+
 
 def team_selector():
     global team
@@ -233,12 +253,12 @@ def team_selector():
                 if bank_team_button.rect.collidepoint(dogadjaj.pos):
                     team = "bank"
                     game()
-                
 
         prozor.fill(pygame.Color("cyan"))
         nacrtaj_dugme_bez_centiranja(miners_team_button)
         nacrtaj_dugme_bez_centiranja(bank_team_button)
         pygame.display.update()
+
 
 def game():
     global selfMinerLevel
@@ -257,8 +277,6 @@ def game():
     thread_server_handler = threading.Thread(target=handle_server, args=[client_socket])
     thread_server_handler.start()
     frame_count = 0
-
-
 
     client_socket.sendall(f"set_team?{team}|".encode())
     while program_radi:
@@ -344,5 +362,6 @@ def main_menu():
         nacrtaj_dugme_bez_centiranja(main_menu_play_button)
         pygame.display.update()
         sat.tick(30)
-main_menu()
 
+
+main_menu()
