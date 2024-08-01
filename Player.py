@@ -20,10 +20,14 @@ class Player:
         self.rect = pygame.Rect(self.x , self.y , 35 , 65)
     def move(self):
         zidovi = [
-            pygame.Rect(165, 120, 5, 250),
+            pygame.Rect(165, 120, 5, 230),
             pygame.Rect(165, 370, 120, 5),
             pygame.Rect(165, 120, 260, 5),
             pygame.Rect(415, 120, 5, 250),
+            pygame.Rect(555 , 120 , 5 , 250),
+            pygame.Rect(555 , 370 , 250 ,5 ),
+            pygame.Rect(775 , 120 , 5 , 250 )
+            
         ]
         keys = pygame.key.get_pressed()
         if False:
@@ -34,41 +38,41 @@ class Player:
             self.rect.y = self.y
             if keys[pygame.K_w]:
                 clear = 0
-                for i in range(4):
+                for i in range(len(zidovi)):
                     zid = zidovi[i]
                     if pygame.Rect(self.rect.x,self.rect.y-self.speed,self.rect.width,self.rect.height).colliderect(zid) == False:
                         clear+=1
-                if clear==4:
+                if clear== len(zidovi):
                     self.y-=self.speed
                 
             if keys[pygame.K_s]:
                 clear = 0
-                for i in range(4):
+                for i in range(len(zidovi)):
                     zid = zidovi[i]
                     if pygame.Rect(self.rect.x, self.rect.y + self.speed , self.rect.width , self.rect.height).colliderect(zid) == False:
                         clear +=1
-                if clear == 4:
+                if clear == len(zidovi):
 
                     self.y += self.speed
                 
             if keys[pygame.K_d]:
                 clear = 0
-                for i in range(4):
+                for i in range(len(zidovi)):
                     zid = zidovi[i]
                     if pygame.Rect(self.rect.x + self.speed , self.rect.y, self.rect.width , self.rect.height).colliderect(zid) == False:
                         clear +=1
-                if clear == 4:
+                if clear == len(zidovi):
 
                     self.x += self.speed
                 
                 self.pravac = "desno"
             if keys[pygame.K_a]:
                 clear = 0
-                for i in range(4):
+                for i in range(len(zidovi)):
                     zid = zidovi[i]
                     if pygame.Rect(self.rect.x -self.speed , self.rect.y , self.rect.width , self.rect.height).colliderect(zid) == False:
                         clear +=1
-                if clear == 4:
+                if clear == len(zidovi):
 
                     self.x -= self.speed
                 
