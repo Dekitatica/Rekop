@@ -205,7 +205,7 @@ while True:
                         
                         pygame.display.update()
                         time.sleep(5)
-                        exit()
+                        
                     time.sleep(0.5)
                 pygame.display.update()
     if len(your_cards)>0:

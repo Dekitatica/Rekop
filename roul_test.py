@@ -7,7 +7,7 @@ pygame.init()
 window = pygame.display.set_mode((800,800))
 
 rects = []
-for i in range(100):
+for i in range(36):
     col = pygame.Color("Red")
     if i%2==0:
         col = pygame.Color("Black")
@@ -17,7 +17,7 @@ for i in range(100):
 
 font = pygame.font.Font(None,30)
 
-dx = 12
+dx = random.randint(800,1500)/100
 clock = pygame.time.Clock()
 frame_count = 0
 while True:
@@ -40,9 +40,9 @@ while True:
     dx-=0.01
     dx = max(0,dx)
     clock.tick(60) #tests
-    for i in range(100):
+    for i in range(36):
         if rects[i][1].x <= -100:
-            rects[i][1].x = rects[i][1].x+3000
+            rects[i][1].x = rects[i][1].x+(36*30)
             rects.append(rects[i])
             del rects[i]
     pygame.draw.polygon(window,pygame.Color("Green"),((375,2),(425,2),(400,15)))
