@@ -5,7 +5,7 @@ import json
 from Player import Player
 import pygame
 import server
-
+import time
 pygame.init()
 prozor = pygame.display.set_mode((1280, 720))
 sat = pygame.time.Clock()
@@ -27,7 +27,7 @@ txt_house_floor = pygame.transform.scale(
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 zidovi = []
 
-cx = 200
+cx = 0
 cy = 0
 
 
@@ -170,6 +170,7 @@ def nacrtaj_mapu():
     global selfPlayer
     global selfid
     global playerRect
+    global players
     prozor.fill("green")
 
     """
@@ -203,25 +204,36 @@ def nacrtaj_mapu():
         # for zid in zidovi:
         #    pygame.draw.rect(prozor, pygame.Color("red"), zid)
 
-        change_house_layer(playerRect)
+        change_house_layer(players)
 
 
-def change_house_layer(playerrect):
+def change_house_layer(players):
+    k1 = True
+    k2 = True   
 
-    if playerrect.colliderect(
-        pygame.Rect(200-cx, 130-cy, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
-    ):
-        prozor.blit(txt_house_floor, (200, 130))
-        prozor.blit(txt_laptop, (280, 120))
-    else:
+    for player in players:
+        try:
+            playerrect = pygame.Rect(player.x,player.y,35,65)
+        except Exception as e:
+            time.sleep(1)
+            playerrect = pygame.Rect(player.x,player.y,35,65)
+            pass
+        if playerrect.colliderect(
+            pygame.Rect(200-cx, 130-cy, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
+        ) and k1:
+            prozor.blit(txt_house_floor, (200, 130))
+            prozor.blit(txt_laptop, (280, 120))
+            k1 = False
+        if playerrect.colliderect(
+            pygame.Rect(580, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
+        ) and k2:
+            prozor.blit(txt_house_floor, (580, 130))
+            prozor.blit(txt_laptop, (660, 120))
+            k2 = False  
+
+    if k1:
         prozor.blit(txt_kuca, (120, 60))
-    if playerrect.colliderect(
-        pygame.Rect(580, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
-    ):
-        prozor.blit(txt_house_floor, (580, 130))
-        prozor.blit(txt_laptop, (660, 120))
-
-    else:
+    if k2:
         prozor.blit(txt_kuca, (500, 60))
 
 
@@ -234,7 +246,7 @@ def create_transparent_rect(surface, color, rect):
 def MinersUpgradeMenu():
     create_transparent_rect(prozor, (0, 0, 0, 127), (20, 20, 1240, 680))
     nacrtaj_dugme_bez_centiranja(btn_buy_miner)
-    if teams_dict != None and selfPlayer != None and selfPlayer.team != "na":
+    if teams_dict != None and selfPlayer != None and selfPlayer.team != "na" and len(teams_dict.keys()) != 0:
         upgrade_level_text = font_upgrade.render(
             f"Upgrade Level : {teams_dict[selfPlayer.team].latest_upgrade}",
             False,
