@@ -4,7 +4,7 @@ import socket
 import json
 from Player import Player
 import pygame
-
+import server
 
 pygame.init()
 prozor = pygame.display.set_mode((1280, 720))
@@ -29,6 +29,13 @@ def dictToPlayer(d):
     p1.team = d["team"]
     return p1
 
+def dictToTeam(d):
+    t1 = server.Team(d["name"])
+    t1.money = int(d["money"])
+    t1.members = d["members"]
+    t1.upgrades = d["upgrades"]
+    t1.multip = d["multip"]
+    return t1
 
 selfPlayer = None
 stupidlist = []
@@ -55,13 +62,14 @@ btn_buy_miner = Dugme(
     pygame.Color("black"),
 )
 
-
+teams_dict = {}
 def handle_server(client_socket):
     global players
     global zidovi
     global selfPlayer
     global stupidlist
     global selfid
+    global teams
     con = client_socket
     while True:
         try:
@@ -95,6 +103,13 @@ def handle_server(client_socket):
                         if player.id == dat[1]:
                             selfid = player.id
                             selfPlayer = player
+                if data.startswith("teams?"):
+                    dat = data.split("?")[1]
+                    dat = json.loads(dat)
+                    teams_dict["bank"] = dictToTeam(json.loads(dat["bank"]))
+                    teams_dict["hero"] = dictToTeam(json.loads(dat["hero"]))
+                    a = 5
+
 
         except Exception as e:
             print(e)
@@ -159,7 +174,7 @@ def nacrtaj_mapu():
                 if player.id == selfid:
                     selfPlayer = player
             except Exception as e:
-                print(f"RARE: Type Error (~130)")
+                print(f"RARE: Type Error (~170)")
             playerRect = pygame.Rect(selfPlayer.x, selfPlayer.y, 35, 65)
         pygame.draw.rect(prozor, pygame.Color("red"), playerRect, 5)
         pygame.draw.rect(
@@ -185,6 +200,8 @@ def change_house_layer(playerrect):
         prozor.blit(txt_house_floor, (200, 130))
     else:
         prozor.blit(txt_kuca, (120, 60))
+
+    
 
 
 def create_transparent_rect(surface, color, rect):

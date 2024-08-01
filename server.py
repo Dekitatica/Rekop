@@ -101,8 +101,11 @@ def player_sender(connections):
     while True:
         try:
             send_all_players(connections)
+            time.sleep(1/60)
+            send_all_teams(connections)
             #print(len(connections))
-        except:
+        except Exception as e:
+            print(e)
             pass
         time.sleep(1/60)
 
@@ -193,7 +196,11 @@ def buy_upgrade(cli : Client):
         teams_dict[cli.player.team].latest_upgrade = upgrade_id
 
 def send_all_teams(clients : list[Client]):
-    json_obj = json.dumps(teams_dict)
+    teams_dict2 = {}
+    for key in teams_dict.keys():
+        teams_dict2[key] = teams_dict[key].toJSON()
+
+    json_obj = json.dumps(teams_dict2)
     for cli in clients:
         cli.con.sendall(f"teams?{json_obj}".encode())
 
@@ -244,59 +251,61 @@ def handle_client(cli : Client) -> None:
                 return
             pass
 
-available_ids = [1]*100
+if __name__=="main":
 
-kicked = []
+    available_ids = [1]*100
 
-connections = []
+    kicked = []
 
-#SERVER_HOST = '192.168.1.107'
-SERVER_HOST = '127.0.0.1'
-SERVER_PORT = 14242
+    connections = []
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #SERVER_HOST = '192.168.1.107'
+    SERVER_HOST = '127.0.0.1'
+    SERVER_PORT = 14242
 
-server_socket.bind((SERVER_HOST, SERVER_PORT))
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-threads = []
+    server_socket.bind((SERVER_HOST, SERVER_PORT))
 
-
-thread_client_kicker = threading.Thread(target=player_sender,args=[connections])
-thread_client_kicker.start()
-
-thread_money_giver = threading.Thread(target=earn_money_loop,args=[teams])
-thread_money_giver.start()
-
-while True:
-    print("start")
-    server_socket.listen(10)
-    print(f"[*] Listening on {SERVER_HOST}:{SERVER_PORT}")
-
-    client_socket, client_address = server_socket.accept()
-    print(f"[*] Accepted connection from {client_address[0]}:{client_address[1]}")
-    
-    new_client = Client(Player(),client_socket)
-    new_client.player.x = 100
-    new_client.player.y = 100
-    newid = -2
-    for i in range(100):
-        if available_ids[i]==1:
-            newid = i
-            available_ids[i] = 0
-            break
-    newid = str(newid)
-    new_client.player.id = newid
-    connections.append(new_client)
-    send_all_players(connections)
-    time.sleep(0.2)
-    new_client.con.sendall(f"id?{newid}".encode())
-    time.sleep(0.2)
-    send_world(new_client)
-    
+    threads = []
 
 
-    print("pre-end")
-    t1 = threading.Thread(target=handle_client,args=[connections[-1]])
-    t1.start()
-    threads.append(t1)
-    print("end")
+    thread_client_kicker = threading.Thread(target=player_sender,args=[connections])
+    thread_client_kicker.start()
+
+    thread_money_giver = threading.Thread(target=earn_money_loop,args=[teams])
+    thread_money_giver.start()
+
+    while True:
+        print("start")
+        server_socket.listen(10)
+        print(f"[*] Listening on {SERVER_HOST}:{SERVER_PORT}")
+
+        client_socket, client_address = server_socket.accept()
+        print(f"[*] Accepted connection from {client_address[0]}:{client_address[1]}")
+        
+        new_client = Client(Player(),client_socket)
+        new_client.player.x = 100
+        new_client.player.y = 100
+        newid = -2
+        for i in range(100):
+            if available_ids[i]==1:
+                newid = i
+                available_ids[i] = 0
+                break
+        newid = str(newid)
+        new_client.player.id = newid
+        connections.append(new_client)
+        send_all_players(connections)
+        time.sleep(0.2)
+        new_client.con.sendall(f"id?{newid}".encode())
+        time.sleep(0.2)
+        send_world(new_client)
+        
+
+
+        print("pre-end")
+        t1 = threading.Thread(target=handle_client,args=[connections[-1]])
+        t1.start()
+        threads.append(t1)
+        print("end")
