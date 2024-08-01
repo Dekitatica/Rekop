@@ -348,10 +348,17 @@ def game():
 
         sat.tick(60)
 
-
+deki = pygame.transform.scale(pygame.image.load("images//retardno1.jpeg"),(200,200))
 def main_menu():
     program_radi = True
     while program_radi:
+        prozor.fill((pygame.Color("cyan")))
+
+        nacrtaj_dugme_bez_centiranja(main_menu_dugme_quit)
+        nacrtaj_dugme_bez_centiranja(main_menu_dugme_credits)
+        nacrtaj_dugme_bez_centiranja(main_menu_play_button)
+
+        mouse_state = pygame.mouse.get_pressed()
         for dogadjaj in pygame.event.get():
             if dogadjaj.type == pygame.QUIT:
                 program_radi = False
@@ -362,17 +369,14 @@ def main_menu():
                     pygame.quit()
                     sys.exit()
                 if main_menu_dugme_credits.rect.collidepoint(dogadjaj.pos):
-                    credits()
+                    prozor.blit(deki,(0,0))
                 if main_menu_play_button.rect.collidepoint(dogadjaj.pos):
                     team_selector()
-
-        prozor.fill((pygame.Color("cyan")))
-
-        nacrtaj_dugme_bez_centiranja(main_menu_dugme_quit)
-        nacrtaj_dugme_bez_centiranja(main_menu_dugme_credits)
-        nacrtaj_dugme_bez_centiranja(main_menu_play_button)
+        mouse_pos = pygame.mouse.get_pos()
         pygame.display.update()
-        sat.tick(30)
+        sat.tick(60)
+
+        
 
 
 main_menu()
