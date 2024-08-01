@@ -3,6 +3,7 @@ import threading
 import json
 import sys
 import time
+
 import world
 import utility
 import pygame
@@ -116,41 +117,41 @@ def request_move(cli : Client,args) -> None:
     zidovi = world_info["walls"]
     if keys["w"]:
         clear = 0
-        for i in range(4):
+        for i in range(len(zidovi)):
             zid = zidovi[i]
             if pygame.Rect(rect.x,rect.y-speed,rect.width,rect.height).colliderect(zid) == False:
                 clear+=1
-        if clear==4:
+        if clear==len(zidovi):
             cli.player.y-=speed
             
         
     if keys["s"]:
         clear = 0
-        for i in range(4):
+        for i in range(len(zidovi)):
             zid = zidovi[i]
             if pygame.Rect(rect.x, rect.y + speed , rect.width , rect.height).colliderect(zid) == False:
                 clear +=1
-        if clear == 4:
+        if clear == len(zidovi):
             cli.player.y += speed
         
     if keys["d"]:
         clear = 0
-        for i in range(4):
+        for i in range(len(zidovi)):
             zid = zidovi[i]
             if pygame.Rect(rect.x + speed , rect.y, rect.width , rect.height).colliderect(zid) == False:
                 clear +=1
-        if clear == 4:
+        if clear == len(zidovi):
 
             cli.player.x += speed
         
 
     if keys["a"]:
         clear = 0
-        for i in range(4):
+        for i in range(len(zidovi)):
             zid = zidovi[i]
             if pygame.Rect(rect.x -speed , rect.y , rect.width , rect.height).colliderect(zid) == False:
                 clear +=1
-        if clear == 4:
+        if clear == len(zidovi):
             cli.player.x -= speed
     return
 

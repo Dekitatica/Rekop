@@ -5,7 +5,6 @@ import json
 from Player import Player
 import pygame
 
-from menu import Dugme, nacrtaj_dugme_bez_centiranja
 
 pygame.init()
 prozor = pygame.display.set_mode((1280, 720))
@@ -21,7 +20,7 @@ txt_house_floor = pygame.transform.scale(
     txt_house_floor,
     (txt_house_floor.get_width() * 0.8, txt_house_floor.get_height() * 0.8),
 )
-
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 zidovi = []
 
 
@@ -36,6 +35,18 @@ stupidlist = []
 selfid = None
 
 font_upgrade = pygame.font.Font(None, 60)
+
+
+class Dugme:
+    def __init__(self, tekst, rect, boja):
+        self.tekst = tekst
+        self.rect = rect
+        self.boja = boja
+
+
+def nacrtaj_dugme_bez_centiranja(dugme):
+    pygame.draw.rect(prozor, dugme.boja, dugme.rect)
+    prozor.blit(dugme.tekst, dugme.rect.topleft)
 
 
 btn_buy_miner = Dugme(
@@ -90,22 +101,38 @@ def handle_server(client_socket):
             if "10054" in str(e) or "timed out" in str(e):
                 return
             pass
+dugme_font = pygame.font.SysFont("Consolas", 60)
+main_menu_dugme_quit = Dugme(
+    dugme_font.render("EXIT", True, (255, 255, 255)),
+    pygame.Rect(560, 465, 150, 60),
+    pygame.Color("black"),
+)
+main_menu_dugme_credits = Dugme(
+    dugme_font.render("CREDITS", True, (255, 255, 255)),
+    pygame.Rect(520, 300, 245, 60),
+    pygame.Color("black"),
+)
+credits_to_main_menu_button = Dugme(
+    dugme_font.render("BACK", True, (255, 255, 255)),
+    pygame.Rect(22, 470, 200, 60),
+    pygame.Color("black"),
+)
+main_menu_play_button = Dugme(
+    dugme_font.render("PLAY", True, (255, 255, 255)),
+    pygame.Rect(560, 180, 150, 60),
+    pygame.Color("black"),
+)
+miners_team_button = Dugme(dugme_font.render("Miner" , True, (255,255,255)), pygame.Rect(100 , 270 , 245 , 60) , pygame.Color("black"))
 
 
-SERVER_HOST = "127.0.0.1"
-SERVER_PORT = 14242
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect((SERVER_HOST, SERVER_PORT))
-print("Connected")
 
-thread_server_handler = threading.Thread(target=handle_server, args=[client_socket])
-thread_server_handler.start()
-frame_count = 0
+
+
+selfMinerLevel = 1
 
 players = []
 
-client_socket.sendall("set_team?bank|".encode())
-selfMinerLevel = 1
+
 
 
 def nacrtaj_mapu():
@@ -142,7 +169,10 @@ def nacrtaj_mapu():
             ),
             5,
         )
-        print(playerRect)
+
+        for zid in zidovi:
+            pygame.draw.rect(prozor, pygame.Color("red"), zid)
+
         change_house_layer(playerRect)
 
 
@@ -170,6 +200,20 @@ def MinersUpgradeMenu():
     )
     prozor.blit(upgrade_level_text, (80, 150))
 
+def team_selector():
+    program_radi = True
+    while program_radi:
+        for dogadjaj in pygame.event.get():
+            if dogadjaj.type == pygame.QUIT:
+                program_radi = False
+                quit()
+            if dogadjaj.type == pygame.MOUSEBUTTONDOWN:
+                if miners_team_button.rect.collidepoint(dogadjaj.pos):
+                    game()
+
+        prozor.fill(pygame.Color("cyan"))
+        nacrtaj_dugme_bez_centiranja(miners_team_button)
+        pygame.display.update()
 
 def game():
     global selfMinerLevel
@@ -178,6 +222,19 @@ def game():
     global stupidlist
     program_radi = True
     frame_count = 0
+    SERVER_HOST = "127.0.0.1"
+    SERVER_PORT = 14242
+
+    client_socket.connect((SERVER_HOST, SERVER_PORT))
+    print("Connected")
+
+    thread_server_handler = threading.Thread(target=handle_server, args=[client_socket])
+    thread_server_handler.start()
+    frame_count = 0
+
+
+
+    client_socket.sendall("set_team?bank|".encode())
     while program_radi:
         if frame_count % 60 == 0:
             try:
@@ -223,15 +280,43 @@ def game():
         for player in players:
             if type(player) == Player:
                 player.draw(prozor)
+                print(f"{player.x , player.y}")
                 # print(f"Rendered player @{player.x, player.y}")
+
         fps_text = font.render(
             f"FPS : {round(sat.get_fps() , 0)}", False, pygame.Color("black")
         )
         MinersUpgradeMenu()
         prozor.blit(fps_text, (0, 0))
+
         pygame.display.update()
 
         sat.tick(60)
 
 
-game()
+def main_menu():
+    program_radi = True
+    while program_radi:
+        for dogadjaj in pygame.event.get():
+            if dogadjaj.type == pygame.QUIT:
+                program_radi = False
+                sys.exit()
+            if dogadjaj.type == pygame.MOUSEBUTTONDOWN:
+                if main_menu_dugme_quit.rect.collidepoint(dogadjaj.pos):
+                    program_radi = False
+                    pygame.quit()
+                    sys.exit()
+                if main_menu_dugme_credits.rect.collidepoint(dogadjaj.pos):
+                    credits()
+                if main_menu_play_button.rect.collidepoint(dogadjaj.pos):
+                    team_selector()
+
+        prozor.fill((pygame.Color("cyan")))
+
+        nacrtaj_dugme_bez_centiranja(main_menu_dugme_quit)
+        nacrtaj_dugme_bez_centiranja(main_menu_dugme_credits)
+        nacrtaj_dugme_bez_centiranja(main_menu_play_button)
+        pygame.display.update()
+        sat.tick(30)
+main_menu()
+
