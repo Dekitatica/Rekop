@@ -23,6 +23,9 @@ txt_house_floor = pygame.transform.scale(
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 zidovi = []
 
+cx = 200
+cy = 0
+
 
 def dictToPlayer(d):
     p1 = Player(d["x"], d["y"], d["id"], d["money"])
@@ -51,7 +54,7 @@ class Dugme:
         self.boja = boja
 
 
-def nacrtaj_dugme_bez_centiranja(dugme):
+def nacrtaj_dugme_bez_centiranja(dugme : Dugme):
     pygame.draw.rect(prozor, dugme.boja, dugme.rect)
     prozor.blit(dugme.tekst, dugme.rect.topleft)
 
@@ -175,19 +178,17 @@ def nacrtaj_mapu():
                     selfPlayer = player
             except Exception as e:
                 print(f"RARE: Type Error (~170)")
-            playerRect = pygame.Rect(selfPlayer.x, selfPlayer.y, 35, 65)
+            playerRect = pygame.Rect(selfPlayer.x-cx, selfPlayer.y-cy, 35, 65)
         pygame.draw.rect(prozor, pygame.Color("red"), playerRect, 5)
         pygame.draw.rect(
             prozor,
             pygame.Color("red"),
             pygame.Rect(
-                200, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6
+                200-cx, 130-cy, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6
             ),
             5,
         )
 
-        for zid in zidovi:
-            pygame.draw.rect(prozor, pygame.Color("red"), zid)
 
         change_house_layer(playerRect)
 
@@ -195,7 +196,7 @@ def nacrtaj_mapu():
 def change_house_layer(playerrect):
 
     if playerrect.colliderect(
-        pygame.Rect(200, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
+        pygame.Rect(200-cx, 130-cy, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
     ):
         prozor.blit(txt_house_floor, (200, 130))
     else:
@@ -246,6 +247,8 @@ def game():
     global playerRect
     global stupidlist
     global team
+    global cx
+    global cy
     program_radi = True
     frame_count = 0
     SERVER_HOST = "127.0.0.1"
@@ -288,12 +291,16 @@ def game():
 
         if keys[pygame.K_w]:
             important_keys["w"] = True
+            #cy+=1
         if keys[pygame.K_s]:
             important_keys["s"] = True
+            #cy-=1
         if keys[pygame.K_a]:
             important_keys["a"] = True
+            #cx+=1
         if keys[pygame.K_d]:
             important_keys["d"] = True
+            #cx+-1
 
         for key in important_keys.keys():
             if important_keys[key] == True:
