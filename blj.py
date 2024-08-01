@@ -29,7 +29,7 @@ cards = ["a","a","a","a"]
 for i in range(2,14):
     if i !=11:
         for j in range(4):
-            cards.append(i)
+            cards.append(min(i,10))
 
 Clock = pygame.time.Clock()
 
@@ -39,8 +39,14 @@ def pick_a_card():
     del cards[ind]
     return card
 
-your_cards = []
+your_cards = [int(str(pick_a_card()).replace("a","11"))]
 dealer_cards = [int(str(pick_a_card()).replace("a","11"))]
+dealer_cards.append(pick_a_card())
+if dealer_cards[-1] == "a":
+    if 24-sum(dealer_cards[0:len(dealer_cards)-1]) >= 11:
+        dealer_cards[-1] = 11
+    else:
+        dealer_cards[-1] = 1
 while True:
     window.fill("Gray")
     events = pygame.event.get()             
@@ -63,7 +69,7 @@ while True:
                 if sum(your_cards[0:(len(your_cards)-1)]) > 10:
                     your_cards[-1] = 1
                 else:
-                    your_cards.append(11)
+                    your_cards[-1] = 11
             time.sleep(0.5)
             print(your_cards)
             if sum(your_cards) >21:
@@ -132,5 +138,6 @@ while True:
             txt+="+" + str(c)+""
         txt +=" = " + str(sum(your_cards))
         window.blit(fnt.render(txt, True, (255, 255, 255)), (150,600))
+    window.blit(fnt.render(str(dealer_cards[1]), True, (0,255,0)), (300,450))
     Clock.tick(60)
     pygame.display.update()
