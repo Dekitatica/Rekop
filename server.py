@@ -3,6 +3,8 @@ import threading
 import json
 import sys
 import time
+import random
+
 
 import world
 import utility
@@ -231,11 +233,14 @@ def handle_client(cli : Client) -> None:
                                 cli.player.team="bank"
                                 if cli.player.id not in team_bank.members:
                                     team_bank.members.append(cli.player.id)
+                                    cli.player.x = 600
+                                    cli.player.y = 400
                             if args=="hero":
                                 cli.player.team="hero"
                                 if cli.player.id not in team_hero.members:
                                     team_hero.members.append(cli.player.id)
-                            
+                                    cli.player.x = 100
+                                    cli.player.y = 100
                     
                     elif data.startswith("heartbeat_received"):
                         print(f"{cli.player.id} Beat received")
@@ -243,6 +248,21 @@ def handle_client(cli : Client) -> None:
                         request_move(cli,data.split("?")[1])
                     if data.startswith("buy_upgrade?"):
                         buy_upgrade(cli)
+                    if data.startswith("teleport_to_bank?"):
+                        cli.player.x = 42069
+                        cli.player.y = 100
+                    if data.startswith("coinflip?"):
+                        args = int(data.split("?")[1])
+                        if teams_dict[cli.player.team].money>=args:
+                            rint = random.randint(0,100)
+                            if rint>=37:
+                                teams_dict[cli.player.team].money+=args
+                            else:
+                                teams_dict[cli.player.team].money-=args
+
+
+
+
                 
 
         except Exception as e:
@@ -286,8 +306,8 @@ if __name__=="__main__":
         print(f"[*] Accepted connection from {client_address[0]}:{client_address[1]}")
         
         new_client = Client(Player(),client_socket)
-        new_client.player.x = 100
-        new_client.player.y = 100
+        new_client.player.x = -100
+        new_client.player.y = -100
         newid = -2
         for i in range(100):
             if available_ids[i]==1:
