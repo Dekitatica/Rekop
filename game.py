@@ -208,6 +208,7 @@ def nacrtaj_mapu():
 
 
 def change_house_layer(players):
+    global playerrect
     k1 = True
     k2 = True   
 
@@ -336,6 +337,8 @@ def game():
             important_keys["d"] = True
             #cx+-1
 
+            
+            
         for key in important_keys.keys():
             if important_keys[key] == True:
                 obj = json.dumps(important_keys)
@@ -348,19 +351,26 @@ def game():
             if type(player) == Player:
                 player.draw(prozor)
                 print(f"{player.x , player.y}")
+                playerrect = pygame.Rect(player.x,player.y,35,65)
+                laptoprect = pygame.Rect(280, 120 , txt_laptop.get_width() , txt_laptop.get_height())
+                if playerrect.colliderect(laptoprect) or playerrect.colliderect(pygame.Rect(660 , 120 , txt_laptop.get_width() , txt_laptop.get_height())):
+                    MinersUpgradeMenu()
                 # print(f"Rendered player @{player.x, player.y}")
 
         fps_text = font.render(
             f"FPS : {round(sat.get_fps() , 0)}", False, pygame.Color("black")
         )
-        MinersUpgradeMenu()
+        #MinersUpgradeMenu()
         prozor.blit(fps_text, (0, 0))
 
         pygame.display.update()
 
         sat.tick(60)
-
-deki = pygame.transform.scale(pygame.image.load("images//retardno1.jpeg"),(200,200))
+text_credits_luka = font.render("Developer : Luka Markovic" , False , pygame.Color("white"))
+text_credits_deki = font.render("Developer : Dejan Livada" , False , pygame.Color("white"))
+deki = pygame.image.load("images//retardno1.jpeg")
+deki = pygame.transform.scale(deki ,(300,400))
+deki = pygame.transform.rotate(deki , -90)
 def main_menu():
     program_radi = True
     while program_radi:
@@ -381,12 +391,31 @@ def main_menu():
                     pygame.quit()
                     sys.exit()
                 if main_menu_dugme_credits.rect.collidepoint(dogadjaj.pos):
-                    prozor.blit(deki,(0,0))
+                    game_credits()
                 if main_menu_play_button.rect.collidepoint(dogadjaj.pos):
                     team_selector()
         mouse_pos = pygame.mouse.get_pos()
         pygame.display.update()
         sat.tick(60)
+
+def game_credits():
+    credits_speed = 0
+    credits_timer = 5
+    program_radi = True
+    while program_radi:
+        for dogadjaj in pygame.event.get():
+            if dogadjaj == pygame.QUIT:
+                program_radi = False
+        credits_speed += 0.2
+        prozor.fill(pygame.Color("cyan"))
+        prozor.blit(text_credits_deki , (580 , credits_speed))
+        prozor.blit(deki , (580 , -400+ credits_speed))
+        prozor.blit(text_credits_luka , (640 , -700+ credits_speed))
+        credits_timer -= 0.001
+        if credits_timer < 0:
+            return
+        pygame.display.update()
+
 
         
 
