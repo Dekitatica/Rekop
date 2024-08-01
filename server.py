@@ -3,6 +3,8 @@ import threading
 import json
 import sys
 import time
+import random
+
 
 import world
 import utility
@@ -245,6 +247,21 @@ def handle_client(cli : Client) -> None:
                         request_move(cli,data.split("?")[1])
                     if data.startswith("buy_upgrade?"):
                         buy_upgrade(cli)
+                    if data.startswith("teleport_to_bank?"):
+                        cli.player.x = 42069
+                        cli.player.y = 100
+                    if data.startswith("coinflip?"):
+                        args = int(data.split("?")[1])
+                        if teams_dict[cli.player.team].money>=args:
+                            rint = random.randint(0,100)
+                            if rint>=37:
+                                teams_dict[cli.player.team].money+=args
+                            else:
+                                teams_dict[cli.player.team].money-=args
+
+
+
+
                 
 
         except Exception as e:
