@@ -127,9 +127,12 @@ def nacrtaj_mapu():
     #    pygame.draw.rect(prozor, pygame.Color("red"), zid)
     if selfPlayer != None:
         for player in players:
-            if player.id == selfid:
-                selfPlayer = player
-        playerRect = pygame.Rect(selfPlayer.x, selfPlayer.y, 35, 65)
+            try:
+                if player.id == selfid:
+                    selfPlayer = player
+            except Exception as e:
+                print(f"RARE: Type Error (~130)")
+            playerRect = pygame.Rect(selfPlayer.x, selfPlayer.y, 35, 65)
         pygame.draw.rect(prozor, pygame.Color("red"), playerRect, 5)
         pygame.draw.rect(
             prozor,

@@ -20,6 +20,37 @@ upgrades = {
     "5" : [75,11000]
 }
 
+class Team:
+    def __init__(self,id) -> None:
+        self.money = 0
+        self.name = id
+        self.members = []
+        self.multip = 1.00
+        self.upgrades = {
+            "0" : True,
+            "1" : False,
+            "2" : False,
+            "3" : False,
+            "4" : False,
+            "5" : False
+        }
+    def toJSON(self):
+        return json.dumps(
+            self,
+            default=lambda o: o.__dict__, 
+            sort_keys=True,
+            indent=4)
+
+
+team_bank = Team("bank")
+team_hero = Team("hero")
+
+teams = {
+    "bank" : team_bank,
+    "hero" : team_hero
+}
+
+
 
 class Player:
     def __init__(self) -> None:
@@ -30,15 +61,6 @@ class Player:
         self.h = 65
         self.id = "-1"
         self.team = "na"
-        self.upgrades = {
-            "0":True,
-            "1":False,
-            "2":False,
-            "3":False,
-            "4":False,
-            "5":False
-        }
-        self.multip = 1.00
     def toJSON(self):
         return json.dumps(
             self,
@@ -61,7 +83,6 @@ def send_all_players(connections : list[Client]):
 
     for cli in connections:
         players.append(cli.player.toJSON())
-
 
     json_obj = ("players?"+json.dumps(players)).encode()
 
@@ -142,24 +163,33 @@ def send_world(cli : Client):
     json_obj = json.dumps(world_info2)
     cli.con.sendall(("worlddata?"+json_obj).encode())
 
-def earn_money_loop(clients : list[Client]):
+teams = [team_hero,team_bank]
+teams_dict = {
+    "bank":team_bank,
+    "hero":team_hero
+}
+def earn_money_loop(teams : list[Client]):
     global upgrades 
     while True:
-        for cli in clients:
-            money_to_give = 0
-            for up in cli.player.upgrades.keys():
-                if cli.player.upgrades[up]:
-                    money_to_give+=upgrades[up][0]
-            cli.player.money+=money_to_give*cli.player.multip
-            print(f"[{cli.player.team.capitalize()}]: {cli.player.id} has {cli.player.money} coins!")
+        if len(team_bank.members) != 0 and len(team_hero.members)!=0:
+            for team in teams:
+                money_to_give = 0
+                for up in team.upgrades.keys():
+                    if team.upgrades[up]:
+                        money_to_give+=upgrades[up][0]
+                team.money+=money_to_give*team.multip
+                print(f"[{team.name.capitalize()}]: {team.money} coins!")
         time.sleep(1)
 
 def buy_upgrade(cli : Client,upgrade_id):
-    if cli.player.money >= upgrades[upgrade_id][1] and cli.player.upgrades[upgrade_id] == False:
-        cli.player.money-= upgrades[upgrade_id][1]
-        cli.player.upgrades[upgrade_id] = True
+    if teams_dict[cli.player.team].money >= upgrades[upgrade_id][1] and teams_dict[cli.player.team].upgrades[upgrade_id] == False:
+        teams_dict[cli.player.team].money-= upgrades[upgrade_id][1]
+        teams_dict[cli.player.team].upgrades[upgrade_id] = True
 
-
+def send_all_teams(clients : list[Client]):
+    json_obj = json.dumps(teams_dict)
+    for cli in clients:
+        cli.con.sendall(f"teams?{json_obj}".encode())
 
 def handle_client(cli : Client) -> None:
     global connections
@@ -185,8 +215,12 @@ def handle_client(cli : Client) -> None:
                             args = data.split("?")[1]
                             if args=="bank":
                                 cli.player.team="bank"
+                                if cli.player.id not in team_bank.members:
+                                    team_bank.members.append(cli.player.id)
                             if args=="hero":
                                 cli.player.team="hero"
+                                if cli.player.id not in team_hero.members:
+                                    team_hero.members.append(cli.player.id)
                             
                     
                     elif data.startswith("heartbeat_received"):
@@ -224,7 +258,7 @@ threads = []
 thread_client_kicker = threading.Thread(target=player_sender,args=[connections])
 thread_client_kicker.start()
 
-thread_money_giver = threading.Thread(target=earn_money_loop,args=[connections])
+thread_money_giver = threading.Thread(target=earn_money_loop,args=[teams])
 thread_money_giver.start()
 
 while True:
