@@ -39,7 +39,7 @@ while True:
         window.blit(txt, (r[1].x+5, 30))
     dx-=0.01
     dx = max(0,dx)
-    clock.tick(60)
+    clock.tick(60) #tests
     for i in range(100):
         if rects[i][1].x <= -100:
             rects[i][1].x = rects[i][1].x+3000
