@@ -190,17 +190,17 @@ def nacrtaj_mapu():
             except Exception as e:
                 print(f"RARE: Type Error (~170)")
             playerRect = pygame.Rect(selfPlayer.x, selfPlayer.y, 35, 65)
-        #pygame.draw.rect(prozor, pygame.Color("red"), playerRect, 5)
-        #pygame.draw.rect(
+        # pygame.draw.rect(prozor, pygame.Color("red"), playerRect, 5)
+        # pygame.draw.rect(
         #    prozor,
         #    pygame.Color("red"),
         #    pygame.Rect(
-         #       200, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6
+        #       200, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6
         #    ),
         #    5,
-       # )
+        # )
 
-        #for zid in zidovi:
+        # for zid in zidovi:
         #    pygame.draw.rect(prozor, pygame.Color("red"), zid)
 
         change_house_layer(playerRect)
@@ -212,12 +212,14 @@ def change_house_layer(playerrect):
         pygame.Rect(200-cx, 130-cy, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
     ):
         prozor.blit(txt_house_floor, (200, 130))
+        prozor.blit(txt_laptop, (280, 120))
     else:
         prozor.blit(txt_kuca, (120, 60))
     if playerrect.colliderect(
-        pygame.Rect(580 , 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
+        pygame.Rect(580, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
     ):
-        prozor.blit(txt_house_floor, (580 , 130))
+        prozor.blit(txt_house_floor, (580, 130))
+        prozor.blit(txt_laptop, (660, 120))
 
     else:
         prozor.blit(txt_kuca, (500, 60))
