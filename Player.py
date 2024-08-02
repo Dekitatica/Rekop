@@ -34,7 +34,7 @@ class Player:
             pass
         else:
         
-            self.rect.x = self.x
+            self.rect.x = self .x
             self.rect.y = self.y
             if keys[pygame.K_w]:
                 clear = 0

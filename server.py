@@ -65,6 +65,8 @@ class Player:
         self.h = 65
         self.id = "-1"
         self.team = "na"
+        self.blj_active = False
+        self.blj_feed = []
     def toJSON(self):
         return json.dumps(
             self,
@@ -77,7 +79,7 @@ class Client:
         self.player = player
         self.con = con
         self.last_heartbeat_ms = round(time.time() * 1000)
-        self.do_i_kill_myself = False
+        self.do_i_kill_myself = False # Terminate thread when sent to True
 
 
 
@@ -193,6 +195,7 @@ def buy_upgrade(cli : Client):
     for key in teams_dict[cli.player.team].upgrades:
         if teams_dict[cli.player.team].upgrades[key] == False:
             upgrade_id = key
+            break
     if teams_dict[cli.player.team].money >= upgrades[upgrade_id][1] and teams_dict[cli.player.team].upgrades[upgrade_id] == False and upgrade_id!="-1":
         teams_dict[cli.player.team].money-= upgrades[upgrade_id][1]
         teams_dict[cli.player.team].upgrades[upgrade_id] = True
@@ -207,6 +210,62 @@ def send_all_teams(clients : list[Client]):
     for cli in clients:
         cli.con.sendall(f"teams?{json_obj}".encode())
 
+def blj(cli : Client,bet : int):
+    available_cards = []
+    player_cards = []
+    for i in range(2,14):
+        for j in range(4):
+            available_cards.append(min(i,10))
+    dealer = [utility.pick_a_card(available_cards,[])]
+    dealer.append(utility.pick_a_card(available_cards,dealer))
+
+    player_cards.append(utility.pick_a_card(available_cards,player_cards))
+
+    cli.con.sendall(f"dealer_cards?{dealer[1]}")
+    cli.con.sendall(f"your_cards?{json.dumps(player_cards)}")
+    extra_wager = -1
+    while True:
+        if len(cli.player.blj_feed)!=0:
+            com = str(cli.player.blj_feed[0])
+            if com.startswith("blj_hit?"):
+                player_cards.append(utility.pick_a_card(available_cards,player_cards))
+                cli.con.sendall(f"your_cards?{json.dumps(player_cards)}")
+                if sum(player_cards)>21:
+                    cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                    cli.player.money-=bet
+                    return
+            if com.startswith("blj_stand?"):
+                while True:
+                    if sum(dealer)<17:
+                        dealer.append(utility.pick_a_card(available_cards,dealer))
+                        if sum(dealer)>21:
+                            cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                            cli.player.money+=bet
+                            return
+                    else:
+                        if sum(player_cards)>sum(dealer):
+                            cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                            cli.player.money+=bet
+                            return
+                        else:
+                            cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                            cli.player.money-=bet
+                            return
+            if com.startswith("blj_double_down?") and extra_wager!=-1:
+                player_cards.append(utility.pick_a_card(available_cards,player_cards))
+                cli.con.sendall(f"your_cards?{json.dumps(player_cards)}")
+                if sum(player_cards)>21:
+                    cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                    cli.player.money-=bet
+                    return          
+                                              
+
+            pass
+        pass
+
+
+
+
 def handle_client(cli : Client) -> None:
     global connections
     con = cli.con
@@ -214,7 +273,7 @@ def handle_client(cli : Client) -> None:
     while True:
         try:
             if cli.do_i_kill_myself:
-                con.send("disconnect".encode()) # ah shit ovo je kad je not responding vrv nece ni primiti ovo
+                con.send("disconnect".encode())
                 del connections[connections.index(cli)]
                 print("Client disconnect!")
                 return
@@ -259,11 +318,16 @@ def handle_client(cli : Client) -> None:
                                 teams_dict[cli.player.team].money+=args
                             else:
                                 teams_dict[cli.player.team].money-=args
+                    if data.startswith("blj?"):
+                        bet = data.split("?")[1]
+                        bet = int(bet)
+                        if bet<=cli.player.money:
+                            cli.player.blj_active = True
+                            blj(cli,bet)
+                    if cli.player.blj_active and data.startswith("blj_hit?"):
+                        cli.player.blj_feed.append(data)
+                        pass
 
-
-
-
-                
 
         except Exception as e:
             print(e)

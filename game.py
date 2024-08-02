@@ -368,7 +368,7 @@ def game():
         sat.tick(60)
 text_credits_luka = font.render("Developer : Luka Markovic" , False , pygame.Color("white"))
 text_credits_deki = font.render("Developer : Dejan Livada" , False , pygame.Color("white"))
-deki = pygame.image.load("images//retardno1.jpeg")
+deki = pygame.image.load("images//specijalan.jpeg")
 deki = pygame.transform.scale(deki ,(300,400))
 deki = pygame.transform.rotate(deki , -90)
 def main_menu():

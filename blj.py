@@ -202,9 +202,11 @@ while True:
                             txt+="+" + str(c)+""
                         txt +=" = " + str(sum(dealer_cards))
                         window.blit(fnt.render(txt, True, (255, 0,0)), (150,700))
+
                         
                         pygame.display.update()
                         time.sleep(5)
+                        exit()
                         
                     time.sleep(0.5)
                 pygame.display.update()
@@ -217,6 +219,7 @@ while True:
                 continue
             txt+="+" + str(c)+""
         txt +=" = " + str(sum(your_cards))
+        cache = txt
         window.blit(fnt.render(txt, True, (255, 255, 255)), (150,600))
     window.blit(fnt.render(str(dealer_cards[1]), True, (0,255,0)), (300,450))
     Clock.tick(60)
