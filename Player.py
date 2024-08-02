@@ -19,6 +19,7 @@ class Player:
         self.collision = False
         self.rect = pygame.Rect(self.x , self.y , 35 , 65)
     def move(self):
+        
         zidovi = [
             pygame.Rect(165, 120, 5, 230),
             pygame.Rect(165, 370, 120, 5),

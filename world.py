@@ -12,3 +12,4 @@ def getworld() -> dict:
         pygame.Rect(805 , 120 , 5 , 250 )
 ]
     return d1
+    

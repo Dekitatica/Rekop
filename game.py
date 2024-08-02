@@ -6,6 +6,7 @@ from Player import Player
 import pygame
 import server
 import time
+
 pygame.init()
 prozor = pygame.display.set_mode((1280, 720))
 sat = pygame.time.Clock()
@@ -51,6 +52,8 @@ stupidlist = []
 selfid = None
 team = "nah"
 font_upgrade = pygame.font.Font(None, 60)
+txt_cas = pygame.image.load("Images//casino.png")
+txt_cas = pygame.transform.scale(txt_cas, (1280, 720))
 
 
 class Dugme:
@@ -60,7 +63,7 @@ class Dugme:
         self.boja = boja
 
 
-def nacrtaj_dugme_bez_centiranja(dugme : Dugme):
+def nacrtaj_dugme_bez_centiranja(dugme: Dugme):
     pygame.draw.rect(prozor, dugme.boja, dugme.rect)
     prozor.blit(dugme.tekst, dugme.rect.topleft)
 
@@ -210,27 +213,40 @@ def nacrtaj_mapu():
 def change_house_layer(players):
     global playerrect
     k1 = True
-    k2 = True   
+    k2 = True
 
     for player in players:
         try:
-            playerrect = pygame.Rect(player.x,player.y,35,65)
+            playerrect = pygame.Rect(player.x, player.y, 35, 65)
         except Exception as e:
             time.sleep(1)
-            playerrect = pygame.Rect(player.x,player.y,35,65)
+            playerrect = pygame.Rect(player.x, player.y, 35, 65)
             pass
-        if playerrect.colliderect(
-            pygame.Rect(200-cx, 130-cy, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
-        ) and k1:
+        if (
+            playerrect.colliderect(
+                pygame.Rect(
+                    200 - cx,
+                    130 - cy,
+                    txt_kuca.get_width() * 0.6,
+                    txt_kuca.get_height() * 0.6,
+                )
+            )
+            and k1
+        ):
             prozor.blit(txt_house_floor, (200, 130))
             prozor.blit(txt_laptop, (280, 120))
             k1 = False
-        if playerrect.colliderect(
-            pygame.Rect(580, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
-        ) and k2:
+        if (
+            playerrect.colliderect(
+                pygame.Rect(
+                    580, 130, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6
+                )
+            )
+            and k2
+        ):
             prozor.blit(txt_house_floor, (580, 130))
             prozor.blit(txt_laptop, (660, 120))
-            k2 = False  
+            k2 = False
 
     if k1:
         prozor.blit(txt_kuca, (120, 60))
@@ -247,7 +263,12 @@ def create_transparent_rect(surface, color, rect):
 def MinersUpgradeMenu():
     create_transparent_rect(prozor, (0, 0, 0, 127), (20, 20, 1240, 680))
     nacrtaj_dugme_bez_centiranja(btn_buy_miner)
-    if teams_dict != None and selfPlayer != None and selfPlayer.team != "na" and len(teams_dict.keys()) != 0:
+    if (
+        teams_dict != None
+        and selfPlayer != None
+        and selfPlayer.team != "na"
+        and len(teams_dict.keys()) != 0
+    ):
         upgrade_level_text = font_upgrade.render(
             f"Upgrade Level : {teams_dict[selfPlayer.team].latest_upgrade}",
             False,
@@ -326,19 +347,17 @@ def game():
 
         if keys[pygame.K_w]:
             important_keys["w"] = True
-            #cy+=1
+            # cy+=1
         if keys[pygame.K_s]:
             important_keys["s"] = True
-            #cy-=1
+            # cy-=1
         if keys[pygame.K_a]:
             important_keys["a"] = True
-            #cx+=1
+            # cx+=1
         if keys[pygame.K_d]:
             important_keys["d"] = True
-            #cx+-1
+            # cx+-1
 
-            
-            
         for key in important_keys.keys():
             if important_keys[key] == True:
                 obj = json.dumps(important_keys)
@@ -351,26 +370,40 @@ def game():
             if type(player) == Player:
                 player.draw(prozor)
                 print(f"{player.x , player.y}")
-                playerrect = pygame.Rect(player.x,player.y,35,65)
-                laptoprect = pygame.Rect(280, 120 , txt_laptop.get_width() , txt_laptop.get_height())
-                if playerrect.colliderect(laptoprect) or playerrect.colliderect(pygame.Rect(660 , 120 , txt_laptop.get_width() , txt_laptop.get_height())):
+                playerrect = pygame.Rect(player.x, player.y, 35, 65)
+                laptoprect = pygame.Rect(
+                    280, 120, txt_laptop.get_width(), txt_laptop.get_height()
+                )
+                if playerrect.colliderect(laptoprect) or playerrect.colliderect(
+                    pygame.Rect(
+                        660, 120, txt_laptop.get_width(), txt_laptop.get_height()
+                    )
+                ):
                     MinersUpgradeMenu()
                 # print(f"Rendered player @{player.x, player.y}")
 
         fps_text = font.render(
             f"FPS : {round(sat.get_fps() , 0)}", False, pygame.Color("black")
         )
-        #MinersUpgradeMenu()
+        # MinersUpgradeMenu()
         prozor.blit(fps_text, (0, 0))
 
         pygame.display.update()
 
         sat.tick(60)
-text_credits_luka = font.render("Developer : Luka Markovic" , False , pygame.Color("white"))
-text_credits_deki = font.render("Developer : Dejan Livada" , False , pygame.Color("white"))
+
+
+text_credits_luka = font.render(
+    "Developer : Luka Markovic", False, pygame.Color("white")
+)
+text_credits_deki = font.render(
+    "Developer : Dejan Livada", False, pygame.Color("white")
+)
 deki = pygame.image.load("images//specijalan.jpeg")
-deki = pygame.transform.scale(deki ,(300,400))
-deki = pygame.transform.rotate(deki , -90)
+deki = pygame.transform.scale(deki, (300, 400))
+deki = pygame.transform.rotate(deki, -90)
+
+
 def main_menu():
     program_radi = True
     while program_radi:
@@ -398,6 +431,7 @@ def main_menu():
         pygame.display.update()
         sat.tick(60)
 
+
 def game_credits():
     credits_speed = 0
     credits_timer = 5
@@ -408,16 +442,66 @@ def game_credits():
                 program_radi = False
         credits_speed += 0.2
         prozor.fill(pygame.Color("cyan"))
-        prozor.blit(text_credits_deki , (580 , credits_speed))
-        prozor.blit(deki , (580 , -400+ credits_speed))
-        prozor.blit(text_credits_luka , (640 , -700+ credits_speed))
+        prozor.blit(text_credits_deki, (580, credits_speed))
+        prozor.blit(deki, (580, -400 + credits_speed))
+        prozor.blit(text_credits_luka, (640, -700 + credits_speed))
         credits_timer -= 0.001
         if credits_timer < 0:
             return
         pygame.display.update()
 
 
-        
+temp_player = pygame.Rect(50, 50, 40, 60)
 
 
-main_menu()
+lista_zidova = [
+    pygame.Rect(20, 50, 1235, 1),
+    pygame.Rect(205, 190, 205, 100),
+    pygame.Rect(520, 175, 235, 110),
+    pygame.Rect(865, 190, 210, 110),
+    # pygame.Rect(1105, 290, 50, 125),
+    # pygame.Rect(775, 290, 55, 120),
+    # pygame.Rect(445, 290, 50, 125),
+    # pygame.Rect(115, 290, 55, 120),
+    pygame.Rect(100, 475, 210, 125),
+    pygame.Rect(465, 460, 105, 195),
+    pygame.Rect(705, 450, 105, 210),
+    pygame.Rect(970, 465, 205, 115),
+    pygame.Rect(1180, 660, 25, 25),
+    pygame.Rect(70, 660, 30, 20),
+    pygame.Rect(20, 50, 2, 645),
+    pygame.Rect(20, 695, 575, 2),
+    pygame.Rect(680, 695, 575, 2),
+    pygame.Rect(1255, 50, 2, 640),
+]
+
+
+def cas():
+    global temp_player
+    program_radi = True
+    while program_radi:
+        for dogadjaj in pygame.event.get():
+            if dogadjaj.type == pygame.QUIT:
+                program_radi = False
+                sys.exit()
+        prozor.blit(txt_cas, (0, 0))
+        pygame.draw.rect(prozor, pygame.Color("blue"), temp_player)
+        for zid in lista_zidova:
+            pygame.draw.rect(prozor, pygame.Color("red"), zid, 5)
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w]:
+            temp_player.y -= 5
+        if keys[pygame.K_s]:
+            temp_player.y += 5
+        if keys[pygame.K_d]:
+            temp_player.x += 5
+        if keys[pygame.K_a]:
+            temp_player.x -= 5
+        print(f"{temp_player.x} {temp_player.y} ")
+
+        pygame.display.update()
+
+
+# main_menu()
+cas()
