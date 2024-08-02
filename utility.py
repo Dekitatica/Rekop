@@ -15,4 +15,3 @@ def pick_a_card(available_cards,ur_cards):
         card = 1
     del available_cards[ind]
     return card
-    
