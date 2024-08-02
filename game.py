@@ -51,6 +51,8 @@ stupidlist = []
 selfid = None
 team = "nah"
 font_upgrade = pygame.font.Font(None, 60)
+txt_cas = pygame.image.load("Images//casino.png")
+txt_cas = pygame.transform.scale(txt_cas, (1280, 720))
 
 
 class Dugme:
@@ -60,7 +62,7 @@ class Dugme:
         self.boja = boja
 
 
-def nacrtaj_dugme_bez_centiranja(dugme : Dugme):
+def nacrtaj_dugme_bez_centiranja(dugme: Dugme):
     pygame.draw.rect(prozor, dugme.boja, dugme.rect)
     prozor.blit(dugme.tekst, dugme.rect.topleft)
 
@@ -209,7 +211,9 @@ def nacrtaj_mapu():
 def change_house_layer(playerrect):
 
     if playerrect.colliderect(
-        pygame.Rect(200-cx, 130-cy, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6)
+        pygame.Rect(
+            200 - cx, 130 - cy, txt_kuca.get_width() * 0.6, txt_kuca.get_height() * 0.6
+        )
     ):
         prozor.blit(txt_house_floor, (200, 130))
         prozor.blit(txt_laptop, (280, 120))
@@ -313,16 +317,16 @@ def game():
 
         if keys[pygame.K_w]:
             important_keys["w"] = True
-            #cy+=1
+            # cy+=1
         if keys[pygame.K_s]:
             important_keys["s"] = True
-            #cy-=1
+            # cy-=1
         if keys[pygame.K_a]:
             important_keys["a"] = True
-            #cx+=1
+            # cx+=1
         if keys[pygame.K_d]:
             important_keys["d"] = True
-            #cx+-1
+            # cx+-1
 
         for key in important_keys.keys():
             if important_keys[key] == True:
@@ -342,6 +346,9 @@ def game():
             f"FPS : {round(sat.get_fps() , 0)}", False, pygame.Color("black")
         )
         MinersUpgradeMenu()
+
+
+
         prozor.blit(fps_text, (0, 0))
 
         pygame.display.update()
@@ -357,7 +364,7 @@ def main_menu():
                 program_radi = False
                 sys.exit()
             if dogadjaj.type == pygame.MOUSEBUTTONDOWN:
-                if main_menu_dugme_quit.rect.collidepoint(dogadjaj.pos):
+                if main_menu_dugme_quit.rect.collidepoint(dogadjaj.pos):  
                     program_radi = False
                     pygame.quit()
                     sys.exit()
@@ -375,4 +382,57 @@ def main_menu():
         sat.tick(30)
 
 
+temp_player = pygame.Rect(50, 50, 40, 60)
+
+
+lista_zidova = [
+    pygame.Rect(20, 50, 1235, 1),
+    pygame.Rect(205, 190, 205, 100),
+    pygame.Rect(520, 175, 235, 110),
+    pygame.Rect(865, 190, 210, 110),
+    # pygame.Rect(1105, 290, 50, 125),
+    # pygame.Rect(775, 290, 55, 120),
+    # pygame.Rect(445, 290, 50, 125),
+    # pygame.Rect(115, 290, 55, 120),
+    pygame.Rect(100, 475, 210, 125),
+    pygame.Rect(465, 460, 105, 195),
+    pygame.Rect(705, 450, 105, 210),
+    pygame.Rect(970, 465, 205, 115),
+    pygame.Rect(1180, 660, 25, 25),
+    pygame.Rect(70, 660, 30, 20),
+    pygame.Rect(20, 50, 2, 645),
+    pygame.Rect(20, 695, 575, 2),
+    pygame.Rect(680, 695, 575, 2),
+    pygame.Rect(1255, 50, 2, 640),
+]
+
+
+def cas():
+    global temp_player
+    program_radi = True
+    while program_radi:
+        for dogadjaj in pygame.event.get():
+            if dogadjaj.type == pygame.QUIT:
+                program_radi = False
+                sys.exit()
+        prozor.blit(txt_cas, (0, 0))
+        pygame.draw.rect(prozor, pygame.Color("blue"), temp_player)
+        for zid in lista_zidova:
+            pygame.draw.rect(prozor, pygame.Color("red"), zid, 5)
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w]:
+            temp_player.y -= 5
+        if keys[pygame.K_s]:
+            temp_player.y += 5
+        if keys[pygame.K_d]:
+            temp_player.x += 5
+        if keys[pygame.K_a]:
+            temp_player.x -= 5
+        print(f"{temp_player.x} {temp_player.y} ")
+
+        pygame.display.update()
+
+
 main_menu()
+#cas()
