@@ -503,28 +503,36 @@ lista_zidova = [
 def cas():
     global temp_player
     program_radi = True
-    while program_radi:
-        for dogadjaj in pygame.event.get():
-            if dogadjaj.type == pygame.QUIT:
-                program_radi = False
-                sys.exit()
-        prozor.blit(txt_cas, (0, 0))
-        pygame.draw.rect(prozor, pygame.Color("blue"), temp_player)
-        for zid in lista_zidova:
-            pygame.draw.rect(prozor, pygame.Color("red"), zid, 5)
+    while program_radi:                                                                                     
+        for dogadjaj in pygame.event.get():                                                                                     
+            if dogadjaj.type == pygame.QUIT:                                                                                     
+                program_radi = False                                                                                     
+                sys.exit()                                                                                     
+        prozor.blit(txt_cas, (0, 0))                                                                                     
+        pygame.draw.rect(prozor, pygame.Color("blue"), temp_player)                                                                                     
+        for zid in lista_zidova:                                                                                     
+            pygame.draw.rect(prozor, pygame.Color("red"), zid, 5)                                                                                     
+                                                                                     
+        keys = pygame.key.get_pressed()                                                                                     
+        if keys[pygame.K_w]:                                                                                     
+            temp_player.y -= 5                                                                                     
+        if keys[pygame.K_s]:                                                                                     
+            temp_player.y += 5                                                                                     
+        if keys[pygame.K_d]:                                                                                     
+            temp_player.x += 5                                                                                     
+        if keys[pygame.K_a]:                                                                                     
+            temp_player.x -= 5                                                                                     
+        print(f"{temp_player.x} {temp_player.y} ")                                                                                     
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            temp_player.y -= 5
-        if keys[pygame.K_s]:
-            temp_player.y += 5
-        if keys[pygame.K_d]:
-            temp_player.x += 5
-        if keys[pygame.K_a]:
-            temp_player.x -= 5
-        print(f"{temp_player.x} {temp_player.y} ")
-
-        pygame.display.update()
+       # if temp_player.colliderect()
 
 
-main_menu()
+
+
+
+        pygame.display.update()                                                                                     
+                                                                                     
+                                                                                     
+main_menu()                                                                                     
+#cas()                                                                                     
+                                                                                     
