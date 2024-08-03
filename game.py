@@ -13,7 +13,8 @@ sat = pygame.time.Clock()
 txt_trava = pygame.image.load("images//grass.png")
 txt_kuca = pygame.image.load("images//kuca.png")
 txt_house_floor = pygame.image.load("images//housefloor.png")
-txt_bank = pygame.image.load("images//bank.png")
+txt_bank = pygame.image.load("images//bank2.png")
+txt_bank = pygame.transform.scale(txt_bank, (1280, 720))
 
 
 txt_laptop = pygame.image.load("images//imageedit_2_6652470183.png")
@@ -266,9 +267,6 @@ def create_transparent_rect(surface, color, rect):
     surface.blit(shape_surf, rect)
 
 
-
-
-
 def MinersUpgradeMenu():
     create_transparent_rect(prozor, (0, 0, 0, 127), (20, 20, 1240, 680))
 
@@ -287,9 +285,6 @@ def MinersUpgradeMenu():
         prozor.blit(upgrade_level_text, (80, 150))
 
 
-
-
-
 def team_selector():
     global team
     program_radi = True
@@ -304,7 +299,6 @@ def team_selector():
                     game()
                 if bank_team_button.rect.collidepoint(dogadjaj.pos):
                     team = "bank"
-
 
                     game()
 
@@ -326,7 +320,6 @@ def game():
     frame_count = 0
     SERVER_HOST = "127.0.0.1"
 
-
     SERVER_PORT = 14242
 
     client_socket.connect((SERVER_HOST, SERVER_PORT))
@@ -343,7 +336,6 @@ def game():
                 client_socket.sendall(f"heartbeat_received?{frame_count}|".encode())
                 print(f"Sent beat {selfPlayer.id}")
             except Exception as e:
-
 
                 print(e)
                 if "10054" in str(e) or "timed out" in str(e):
@@ -393,7 +385,6 @@ def game():
                 playerrect = pygame.Rect(player.x, player.y, 35, 65)
 
                 laptoprect = pygame.Rect(
-
                     280, 120, txt_laptop.get_width(), txt_laptop.get_height()
                 )
                 if playerrect.colliderect(laptoprect) or playerrect.colliderect(
@@ -434,12 +425,12 @@ def main_menu():
         nacrtaj_dugme_bez_centiranja(main_menu_dugme_quit)
         nacrtaj_dugme_bez_centiranja(main_menu_dugme_credits)
         nacrtaj_dugme_bez_centiranja(main_menu_play_button)
- 
+
         mouse_state = pygame.mouse.get_pressed()
         for dogadjaj in pygame.event.get():
             if dogadjaj.type == pygame.QUIT:
                 program_radi = False
-                sys.exit() 
+                sys.exit()
 
             if dogadjaj.type == pygame.MOUSEBUTTONDOWN:
                 if main_menu_dugme_quit.rect.collidepoint(dogadjaj.pos):
@@ -484,7 +475,6 @@ lista_zidova = [
     pygame.Rect(520, 175, 235, 110),
     pygame.Rect(865, 190, 210, 110),
     # pygame.Rect(1105, 290, 50, 125),
-
     # pygame.Rect(775, 290, 55, 120),
     # pygame.Rect(445, 290, 50, 125),
     # pygame.Rect(115, 290, 55, 120),
@@ -504,38 +494,48 @@ lista_zidova = [
 def cas():
     global temp_player
     program_radi = True
-    while program_radi:                                                                                     
-        for dogadjaj in pygame.event.get():                                                                                     
-            if dogadjaj.type == pygame.QUIT:                                                                                     
-                program_radi = False                                                                                     
-                sys.exit()                                                                                     
-        prozor.blit(txt_cas, (0, 0))                                                                                     
-        pygame.draw.rect(prozor, pygame.Color("blue"), temp_player)                                                                                     
-        for zid in lista_zidova:                                                                                     
-            pygame.draw.rect(prozor, pygame.Color("red"), zid, 5)                                                                                     
-                                                                                     
-        keys = pygame.key.get_pressed()                                                      
+    while program_radi:
+        for dogadjaj in pygame.event.get():
+            if dogadjaj.type == pygame.QUIT:
+                program_radi = False
+                sys.exit()
+        prozor.blit(txt_cas, (0, 0))
+        pygame.draw.rect(prozor, pygame.Color("blue"), temp_player)
+        for zid in lista_zidova:
+            pygame.draw.rect(prozor, pygame.Color("red"), zid, 5)
+
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_w]:
+            temp_player.y -= 5
+        if keys[pygame.K_s]:
+            temp_player.y += 5
+        if keys[pygame.K_d]:
+            temp_player.x += 5
+        if keys[pygame.K_a]:
+            temp_player.x -= 5
+        print(f"{temp_player.x} {temp_player.y} ")
+
+        # if temp_player.colliderect()
+
+        pygame.display.update()
 
 
-        if keys[pygame.K_w]:                                                                                     
-            temp_player.y -= 5                                                                                     
-        if keys[pygame.K_s]:                                                                                     
-            temp_player.y += 5                                                                                     
-        if keys[pygame.K_d]:                                                                                     
-            temp_player.x += 5                                                                                     
-        if keys[pygame.K_a]:                                                                                     
-            temp_player.x -= 5                                                                                     
-        print(f"{temp_player.x} {temp_player.y} ")                                                                                     
+def bank():
+    global temp_player
+    program_radi = True
+    while program_radi:
+        for dogadjaj in pygame.event.get():
+            if dogadjaj.type == pygame.QUIT:
+                program_radi = False
+                sys.exit()
+        prozor.blit(txt_bank, (0, 0))
 
-       # if temp_player.colliderect()
+        
+
+        pygame.display.update()
 
 
-
-
-
-        pygame.display.update()                                                                                     
-                                                                                     
-                                                                                     
-main_menu()                                                                                     
-#cas()                                                                                     
-                                                                                     
+bank()
+# main_menu()
+# cas()
