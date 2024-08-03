@@ -260,8 +260,12 @@ def create_transparent_rect(surface, color, rect):
     surface.blit(shape_surf, rect)
 
 
+
+
+
 def MinersUpgradeMenu():
     create_transparent_rect(prozor, (0, 0, 0, 127), (20, 20, 1240, 680))
+
     nacrtaj_dugme_bez_centiranja(btn_buy_miner)
     if (
         teams_dict != None
@@ -275,6 +279,9 @@ def MinersUpgradeMenu():
             pygame.Color("black"),
         )
         prozor.blit(upgrade_level_text, (80, 150))
+
+
+
 
 
 def team_selector():
@@ -291,6 +298,8 @@ def team_selector():
                     game()
                 if bank_team_button.rect.collidepoint(dogadjaj.pos):
                     team = "bank"
+
+
                     game()
 
         prozor.fill(pygame.Color("cyan"))
@@ -310,6 +319,8 @@ def game():
     program_radi = True
     frame_count = 0
     SERVER_HOST = "127.0.0.1"
+
+
     SERVER_PORT = 14242
 
     client_socket.connect((SERVER_HOST, SERVER_PORT))
@@ -326,6 +337,8 @@ def game():
                 client_socket.sendall(f"heartbeat_received?{frame_count}|".encode())
                 print(f"Sent beat {selfPlayer.id}")
             except Exception as e:
+
+
                 print(e)
                 if "10054" in str(e) or "timed out" in str(e):
                     break
@@ -369,9 +382,12 @@ def game():
         for player in players:
             if type(player) == Player:
                 player.draw(prozor)
+
                 print(f"{player.x , player.y}")
                 playerrect = pygame.Rect(player.x, player.y, 35, 65)
+
                 laptoprect = pygame.Rect(
+
                     280, 120, txt_laptop.get_width(), txt_laptop.get_height()
                 )
                 if playerrect.colliderect(laptoprect) or playerrect.colliderect(
@@ -412,12 +428,13 @@ def main_menu():
         nacrtaj_dugme_bez_centiranja(main_menu_dugme_quit)
         nacrtaj_dugme_bez_centiranja(main_menu_dugme_credits)
         nacrtaj_dugme_bez_centiranja(main_menu_play_button)
-
+ 
         mouse_state = pygame.mouse.get_pressed()
         for dogadjaj in pygame.event.get():
             if dogadjaj.type == pygame.QUIT:
                 program_radi = False
-                sys.exit()
+                sys.exit() 
+
             if dogadjaj.type == pygame.MOUSEBUTTONDOWN:
                 if main_menu_dugme_quit.rect.collidepoint(dogadjaj.pos):
                     program_radi = False
@@ -436,6 +453,7 @@ def game_credits():
     credits_speed = 0
     credits_timer = 5
     program_radi = True
+
     while program_radi:
         for dogadjaj in pygame.event.get():
             if dogadjaj == pygame.QUIT:
@@ -460,6 +478,7 @@ lista_zidova = [
     pygame.Rect(520, 175, 235, 110),
     pygame.Rect(865, 190, 210, 110),
     # pygame.Rect(1105, 290, 50, 125),
+
     # pygame.Rect(775, 290, 55, 120),
     # pygame.Rect(445, 290, 50, 125),
     # pygame.Rect(115, 290, 55, 120),
@@ -489,7 +508,9 @@ def cas():
         for zid in lista_zidova:                                                                                     
             pygame.draw.rect(prozor, pygame.Color("red"), zid, 5)                                                                                     
                                                                                      
-        keys = pygame.key.get_pressed()                                                                                     
+        keys = pygame.key.get_pressed()                                                      
+
+
         if keys[pygame.K_w]:                                                                                     
             temp_player.y -= 5                                                                                     
         if keys[pygame.K_s]:                                                                                     
