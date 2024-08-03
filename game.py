@@ -29,7 +29,7 @@ txt_house_floor = pygame.transform.scale(
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 zidovi = []
 
-cx = 0
+cx = 42069
 cy = 0
 
 
@@ -308,12 +308,16 @@ def team_selector():
         pygame.display.update()
 
 
+in_bank = False
+
+
 def game():
     global selfMinerLevel
     global selfPlayer
     global playerRect
     global stupidlist
     global team
+    global in_bank
     global cx
     global cy
     program_radi = True
@@ -368,18 +372,30 @@ def game():
         if keys[pygame.K_d]:
             important_keys["d"] = True
             # cx+-1
+        if keys[pygame.K_b]:
+            in_bank = True
+            client_socket.sendall("teleport_to_bank?|".encode())
 
         for key in important_keys.keys():
             if important_keys[key] == True:
                 obj = json.dumps(important_keys)
                 client_socket.sendall(f"request_move?{obj}|".encode())
                 break
+        if in_bank == False:
 
-        nacrtaj_mapu()
+            nacrtaj_mapu()
+        else:
+            prozor.fill(pygame.Color("green"))
+            prozor.blit(txt_bank, (0, 0))
 
         for player in players:
             if type(player) == Player:
-                player.draw(prozor)
+
+                if in_bank:
+
+                    player.draw(prozor, player.x - cx)
+                else:
+                    player.draw(prozor)
 
                 print(f"{player.x , player.y}")
                 playerrect = pygame.Rect(player.x, player.y, 35, 65)
@@ -393,6 +409,7 @@ def game():
                     )
                 ):
                     MinersUpgradeMenu()
+
                 # print(f"Rendered player @{player.x, player.y}")
 
         fps_text = font.render(
@@ -484,58 +501,13 @@ lista_zidova = [
     pygame.Rect(970, 465, 205, 115),
     pygame.Rect(1180, 660, 25, 25),
     pygame.Rect(70, 660, 30, 20),
-    pygame.Rect(20, 50, 2, 645),
-    pygame.Rect(20, 695, 575, 2),
-    pygame.Rect(680, 695, 575, 2),
-    pygame.Rect(1255, 50, 2, 640),
+    pygame.Rect(20 + 42069, 50, 2, 645),
+    pygame.Rect(20+ 42069, 695, 575, 2),
+    pygame.Rect(680+ 42069, 695, 575, 2),
+    pygame.Rect(1255+ 42069, 50, 2, 640),
 ]
 
 
-def cas():
-    global temp_player
-    program_radi = True
-    while program_radi:
-        for dogadjaj in pygame.event.get():
-            if dogadjaj.type == pygame.QUIT:
-                program_radi = False
-                sys.exit()
-        prozor.blit(txt_cas, (0, 0))
-        pygame.draw.rect(prozor, pygame.Color("blue"), temp_player)
-        for zid in lista_zidova:
-            pygame.draw.rect(prozor, pygame.Color("red"), zid, 5)
-
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_w]:
-            temp_player.y -= 5
-        if keys[pygame.K_s]:
-            temp_player.y += 5
-        if keys[pygame.K_d]:
-            temp_player.x += 5
-        if keys[pygame.K_a]:
-            temp_player.x -= 5
-        print(f"{temp_player.x} {temp_player.y} ")
-
-        # if temp_player.colliderect()
-
-        pygame.display.update()
-
-
-def bank():
-    global temp_player
-    program_radi = True
-    while program_radi:
-        for dogadjaj in pygame.event.get():
-            if dogadjaj.type == pygame.QUIT:
-                program_radi = False
-                sys.exit()
-        prozor.blit(txt_bank, (0, 0))
-
-        
-
-        pygame.display.update()
-
-
-bank()
-# main_menu()
+# bank()
+main_menu()
 # cas()

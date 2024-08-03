@@ -333,8 +333,8 @@ def handle_client(cli : Client) -> None:
                     if data.startswith("buy_upgrade?"):
                         buy_upgrade(cli)
                     if data.startswith("teleport_to_bank?"):
-                        cli.player.x = 42069
-                        cli.player.y = 100
+                        cli.player.x = 42200    
+                        cli.player.y = 200
                     if data.startswith("coinflip?"):
                         args = int(data.split("?")[1])
                         if teams_dict[cli.player.team].money>=args:

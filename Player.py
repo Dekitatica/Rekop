@@ -82,8 +82,10 @@ class Player:
                 self.picture = self.txt_player_right
             if(self.pravac == "levo"):
                 self.picture = self.txt_player_left
-    def draw(self , surface):
-        surface.blit(self.picture , (self.x , self.y))
+    def draw(self , surface , x_override = None):
+        if x_override == None:
+            x_override= self.x
+        surface.blit(self.picture , (x_override , self.y))
 
 
 player = Player(50 , 50 ,-1,-1)
