@@ -10,7 +10,7 @@ rects = []
 for i in range(36):
     col = pygame.Color("Red")
     if i%2==0:
-        col = pygame.Color("Black")
+        col = pygame.Color("Black")  
     if i == 0:
         col = pygame.Color("Green")
     rects.append([i,pygame.Rect(i*30+400,20,30,40),col])

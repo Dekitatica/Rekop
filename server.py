@@ -221,7 +221,7 @@ def blj(cli : Client,bet : int):
 
     player_cards.append(utility.pick_a_card(available_cards,player_cards))
 
-    cli.con.sendall(f"dealer_cards?{dealer[1]}")
+    cli.con.sendall(f"dealer_cards?{json.dumps(dealer[1:len(dealer)])}")
     cli.con.sendall(f"your_cards?{json.dumps(player_cards)}")
     extra_wager = -1
     while True:
@@ -230,6 +230,7 @@ def blj(cli : Client,bet : int):
             if com.startswith("blj_hit?"):
                 player_cards.append(utility.pick_a_card(available_cards,player_cards))
                 cli.con.sendall(f"your_cards?{json.dumps(player_cards)}")
+
                 if sum(player_cards)>21:
                     cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
                     cli.player.money-=bet
@@ -238,6 +239,7 @@ def blj(cli : Client,bet : int):
                 while True:
                     if sum(dealer)<17:
                         dealer.append(utility.pick_a_card(available_cards,dealer))
+                        cli.con.sendall(f"dealer_cards?{json.dumps(dealer[1:len(dealer)])}")
                         if sum(dealer)>21:
                             cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
                             cli.player.money+=bet
@@ -258,7 +260,23 @@ def blj(cli : Client,bet : int):
                     cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
                     cli.player.money-=bet
                     return          
-                                              
+                while True:
+                    if sum(dealer)<17:
+                        dealer.append(utility.pick_a_card(available_cards,dealer))
+                        cli.con.sendall(f"dealer_cards?{json.dumps(dealer[1:len(dealer)])}")
+                        if sum(dealer)>21:
+                            cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                            cli.player.money+=bet
+                            return
+                    else:
+                        if sum(player_cards)>sum(dealer):
+                            cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                            cli.player.money+=bet
+                            return
+                        else:
+                            cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                            cli.player.money-=bet
+                            return                       
 
             pass
         pass

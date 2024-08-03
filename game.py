@@ -75,8 +75,9 @@ btn_buy_miner = Dugme(
 )
 
 teams_dict = {}
-
-
+dealer_cards = 0
+my_cards = 0
+blj_updates = []
 def handle_server(client_socket):
     global players
     global zidovi
@@ -84,7 +85,10 @@ def handle_server(client_socket):
     global stupidlist
     global selfid
     global teams
+    global my_cards
+    global dealer_cards
     con = client_socket
+    global blj_updates
     while True:
         try:
             data = con.recv(4096)
@@ -123,6 +127,26 @@ def handle_server(client_socket):
                     teams_dict["bank"] = dictToTeam(json.loads(dat["bank"]))
                     teams_dict["hero"] = dictToTeam(json.loads(dat["hero"]))
                     a = 5
+                if data.startswith("dealer_cards?"):
+                    dat = data.split("?")[1]
+                    dealer_cards = json.loads(dat)
+                if data.startswith("your_cards?"):
+                    dat = data.split("?")[1]
+                    my_cards = json.loads(dat)
+                if data.startswith("blj_end?"):
+                    dat = data.split("?")[1]
+                    dat = dat.split(";")
+                    d1 = {
+                        "wl" : dat[0],
+                        "your_cards" : json.loads(dat[1]),
+                        "dealer_cards" : json.loads(dat[2]),
+                        "bet" : int(dat[3])
+                        
+                    }
+                    blj_updates.append(d1)
+                    
+                
+
 
         except Exception as e:
             print(e)
@@ -415,9 +439,9 @@ text_credits_luka = font.render(
 text_credits_deki = font.render(
     "Developer : Dejan Livada", False, pygame.Color("white")
 )
-deki = pygame.image.load("images//specijalan.jpeg")
-deki = pygame.transform.scale(deki, (300, 400))
-deki = pygame.transform.rotate(deki, -90)
+#deki = pygame.image.load("images//specijalan.jpeg")
+#deki = pygame.transform.scale(deki, (300, 400))
+#deki = pygame.transform.rotate(deki, -90)
 
 
 def main_menu():
@@ -461,7 +485,7 @@ def game_credits():
         credits_speed += 0.2
         prozor.fill(pygame.Color("cyan"))
         prozor.blit(text_credits_deki, (580, credits_speed))
-        prozor.blit(deki, (580, -400 + credits_speed))
+       # prozor.blit(deki, (580, -400 + credits_speed))
         prozor.blit(text_credits_luka, (640, -700 + credits_speed))
         credits_timer -= 0.001
         if credits_timer < 0:
