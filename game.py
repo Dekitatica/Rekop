@@ -123,6 +123,12 @@ def handle_server(client_socket):
                     teams_dict["bank"] = dictToTeam(json.loads(dat["bank"]))
                     teams_dict["hero"] = dictToTeam(json.loads(dat["hero"]))
                     a = 5
+                if data.startswith("end?"):
+                    dat = data.split("?")[1]
+                    if dat.startswith("L"):
+                        print("izgubio si crncu")
+                    if dat.startswith("You win!"):
+                        print("pobeda")
 
         except Exception as e:
             print(e)
