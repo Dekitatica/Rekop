@@ -144,7 +144,6 @@ main_menu_dugme_credits = Dugme(
 )
 credits_to_main_menu_button = Dugme(
     dugme_font.render("BACK", True, (255, 255, 255)),
-    dugme_font.render("BACK", True, (255, 255, 255)),
     pygame.Rect(22, 470, 200, 60),
     pygame.Color("black"),
 )
@@ -533,4 +532,4 @@ def cas():
                                                                                      
 main_menu()                                                                                     
 #cas()                                                                                     
-                                                                                                 
+                                                                                     
