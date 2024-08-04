@@ -16,8 +16,12 @@ txt_house_floor = pygame.image.load("images//housefloor.png")
 txt_bank = pygame.image.load("images//bank2.png")
 txt_bank = pygame.transform.scale(txt_bank, (1280, 720))
 
+txt_atm = pygame.image.load("images//atm.png")
 
+txt_atm = pygame.transform.scale(txt_atm, (100, 100))
 txt_laptop = pygame.image.load("images//imageedit_2_6652470183.png")
+
+
 txt_kuca = pygame.transform.scale(
     txt_kuca, (txt_kuca.get_width() * 0.69, txt_kuca.get_height() * 0.69)
 )
@@ -414,10 +418,22 @@ def game():
 
         for player in players:
             if type(player) == Player:
+                if player.id == selfid:
+                    if playerrect.colliderect(laptoprect) or playerrect.colliderect(
+                    pygame.Rect(
+                        660, 120, txt_laptop.get_width(), txt_laptop.get_height())
+                    ):
+                    
+                        MinersUpgradeMenu()
 
                 if in_bank:
+                    player.rect.x = 1000
+                    prozor.blit(txt_atm, (280, 60))
+                    prozor.blit(txt_atm, (610, 60))
+                    prozor.blit(txt_atm, (950, 60))
 
                     player.draw(prozor, player.x - cx)
+
                 else:
                     player.draw(prozor)
 
@@ -527,9 +543,9 @@ lista_zidova = [
     pygame.Rect(1180, 660, 25, 25),
     pygame.Rect(70, 660, 30, 20),
     pygame.Rect(20 + 42069, 50, 2, 645),
-    pygame.Rect(20+ 42069, 695, 575, 2),
-    pygame.Rect(680+ 42069, 695, 575, 2),
-    pygame.Rect(1255+ 42069, 50, 2, 640),
+    pygame.Rect(20 + 42069, 695, 575, 2),
+    pygame.Rect(680 + 42069, 695, 575, 2),
+    pygame.Rect(1255 + 42069, 50, 2, 640),
 ]
 
 
