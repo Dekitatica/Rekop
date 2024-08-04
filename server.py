@@ -382,7 +382,7 @@ if __name__=="__main__":
     thread_client_kicker = threading.Thread(target=player_sender,args=[connections])
     thread_client_kicker.start()
 
-    thread_money_giver = threading.Thread(target=earn_money_loop,args=[teams])
+    thread_money_giver = threading.Thread(target=earn_money_loop,args=[teams,connections])
     thread_money_giver.start()
 
     while True:
