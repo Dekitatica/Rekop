@@ -232,15 +232,16 @@ def change_house_layer(players):
         try:
             playerrect = pygame.Rect(player.x, player.y, 35, 65)
         except Exception as e:
-            time.sleep(1)
-            continue
-            playerrect = pygame.Rect(player.x, player.y, 35, 65)
-            pass
+            time.sleep(0.9)
+            try:
+                playerrect = pygame.Rect(player.x, player.y, 35, 65)
+            except:
+                pass
         if (
             playerrect.colliderect(
                 pygame.Rect(
-                    200 - cx,
-                    130 - cy,
+                    200,
+                    130,
                     txt_kuca.get_width() * 0.6,
                     txt_kuca.get_height() * 0.6,
                 )
@@ -444,12 +445,18 @@ def game():
 
                 # print(f"{player.x , player.y}")
                 playerrect = pygame.Rect(player.x, player.y, 35, 65)
-                atm_rect = pygame.Rect(280, 60, 100, 100)
-                laptoprect = pygame.Rect(
-                    280, 120, txt_laptop.get_width(), txt_laptop.get_height()
-                )
+                atm_rect = pygame.Rect(280 , 60 , 100,100)
+                if player==selfPlayer:
+                    laptoprect = pygame.Rect(
+                        280, 120, txt_laptop.get_width(), txt_laptop.get_height()
+                    )
+                    if playerrect.colliderect(laptoprect) or playerrect.colliderect(
+                        pygame.Rect(
+                            660, 120, txt_laptop.get_width(), txt_laptop.get_height()
+                        )
+                    ):
+                        MinersUpgradeMenu()
 
-                # if playerrect.colliderect()
                 # print(f"Rendered player @{player.x, player.y}")
 
         fps_text = font.render(
