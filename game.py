@@ -423,14 +423,7 @@ def game():
 
         for player in players:
             if type(player) == Player:
-                if player.id == selfid:
-                    if playerrect.colliderect(laptoprect) or playerrect.colliderect(
-                        pygame.Rect(
-                            660, 120, txt_laptop.get_width(), txt_laptop.get_height()
-                        )
-                    ):
 
-                        MinersUpgradeMenu()
 
                 if in_bank:
                     player.rect.x = 1000

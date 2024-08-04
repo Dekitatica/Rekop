@@ -191,9 +191,9 @@ def earn_money_loop(teams : list[Team], clients : list[Client]):
                 if team.money>15000:
                     for cl in clients:
                         if cl.player.team == team.name:
-                            cl.con.sendall("end?You win")
+                            cl.con.sendall("end?You win".encode())
                         else:
-                            cl.con.sendall("end?L")
+                            cl.con.sendall("end?L".encode())
         time.sleep(1)
 
 def buy_upgrade(cli : Client):
