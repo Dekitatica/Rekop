@@ -231,6 +231,7 @@ def change_house_layer(players):
             playerrect = pygame.Rect(player.x, player.y, 35, 65)
         except Exception as e:
             time.sleep(1)
+            continue
             playerrect = pygame.Rect(player.x, player.y, 35, 65)
             pass
         if (
@@ -339,6 +340,9 @@ def game():
 
     client_socket.sendall(f"set_team?{team}|".encode())
     while program_radi:
+
+        create_transparent_rect(prozor,pygame.Color("Black"),pygame.Rect(0,0,150,50))
+
         if frame_count % 60 == 0:
             try:
                 client_socket.sendall(f"heartbeat_received?{frame_count}|".encode())
@@ -386,11 +390,30 @@ def game():
                 client_socket.sendall(f"request_move?{obj}|".encode())
                 break
         if in_bank == False:
-
             nacrtaj_mapu()
         else:
             prozor.fill(pygame.Color("green"))
             prozor.blit(txt_bank, (0, 0))
+        create_transparent_rect(prozor,(0,0,0,127),pygame.Rect(1130,0,150,65))
+        try:
+            fps_text = font.render(
+                f"MONEY", False, pygame.Color("white")
+            )
+            prozor.blit(fps_text,(1130,0))
+            
+            fps_text = font.render(
+                f"BANK : {teams_dict['bank'].money}", False, pygame.Color("white")
+            )
+            prozor.blit(fps_text,(1130,25))
+            fps_text = font.render(
+                f"HERO : {teams_dict['hero'].money}", False, pygame.Color("white")
+            )
+            prozor.blit(fps_text,(1130,45))
+            
+        except:
+            pass
+
+        
 
         for player in players:
             if type(player) == Player:

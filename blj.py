@@ -16,6 +16,7 @@ class Dugme:
         self.boja = boja
 
 
+
 fnt = pygame.font.Font(None, 60)
 fnt2 = pygame.font.Font(None, 40)
 def nacrtaj_dugme_bez_centiranja(dugme : Dugme):
@@ -189,7 +190,7 @@ while True:
                         if 24-sum(dealer_cards[0:len(dealer_cards)-1]) >= 11:
                             dealer_cards[-1] = 11
                         else:
-                            dealer_cards.append(1)
+                            dealer_cards[-1] = 1
                     print(f"Dealer drew {dealer_cards[-1]}")
                     if sum(dealer_cards)>21:
                         print(f"You won {dbl_wager+wager}! Dealer: {dealer_cards}")
