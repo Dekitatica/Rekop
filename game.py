@@ -13,7 +13,8 @@ sat = pygame.time.Clock()
 txt_trava = pygame.image.load("images//grass.png")
 txt_kuca = pygame.image.load("images//kuca.png")
 txt_house_floor = pygame.image.load("images//housefloor.png")
-txt_bank = pygame.image.load("images//bank.png")
+txt_bank = pygame.image.load("images//bank2.png")
+txt_bank = pygame.transform.scale(txt_bank, (1280, 720))
 
 
 txt_laptop = pygame.image.load("images//imageedit_2_6652470183.png")
@@ -28,7 +29,7 @@ txt_house_floor = pygame.transform.scale(
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 zidovi = []
 
-cx = 0
+cx = 42069
 cy = 0
 
 
@@ -123,6 +124,12 @@ def handle_server(client_socket):
                     teams_dict["bank"] = dictToTeam(json.loads(dat["bank"]))
                     teams_dict["hero"] = dictToTeam(json.loads(dat["hero"]))
                     a = 5
+                if data.startswith("end?"):
+                    dat = data.split("?")[1]
+                    if dat.startswith("L"):
+                        print("izgubio si crncu")
+                    if dat.startswith("You win!"):
+                        print("pobeda")
 
         except Exception as e:
             print(e)
@@ -261,9 +268,6 @@ def create_transparent_rect(surface, color, rect):
     surface.blit(shape_surf, rect)
 
 
-
-
-
 def MinersUpgradeMenu():
     create_transparent_rect(prozor, (0, 0, 0, 127), (20, 20, 1240, 680))
 
@@ -282,9 +286,6 @@ def MinersUpgradeMenu():
         prozor.blit(upgrade_level_text, (80, 150))
 
 
-
-
-
 def team_selector():
     global team
     program_radi = True
@@ -300,7 +301,6 @@ def team_selector():
                 if bank_team_button.rect.collidepoint(dogadjaj.pos):
                     team = "bank"
 
-
                     game()
 
         prozor.fill(pygame.Color("cyan"))
@@ -309,18 +309,21 @@ def team_selector():
         pygame.display.update()
 
 
+in_bank = False
+
+
 def game():
     global selfMinerLevel
     global selfPlayer
     global playerRect
     global stupidlist
     global team
+    global in_bank
     global cx
     global cy
     program_radi = True
     frame_count = 0
     SERVER_HOST = "127.0.0.1"
-
 
     SERVER_PORT = 14242
 
@@ -341,7 +344,6 @@ def game():
                 client_socket.sendall(f"heartbeat_received?{frame_count}|".encode())
                 print(f"Sent beat {selfPlayer.id}")
             except Exception as e:
-
 
                 print(e)
                 if "10054" in str(e) or "timed out" in str(e):
@@ -374,14 +376,20 @@ def game():
         if keys[pygame.K_d]:
             important_keys["d"] = True
             # cx+-1
+        if keys[pygame.K_b]:
+            in_bank = True
+            client_socket.sendall("teleport_to_bank?|".encode())
 
         for key in important_keys.keys():
             if important_keys[key] == True:
                 obj = json.dumps(important_keys)
                 client_socket.sendall(f"request_move?{obj}|".encode())
                 break
-
-        nacrtaj_mapu()
+        if in_bank == False:
+            nacrtaj_mapu()
+        else:
+            prozor.fill(pygame.Color("green"))
+            prozor.blit(txt_bank, (0, 0))
         create_transparent_rect(prozor,(0,0,0,127),pygame.Rect(1130,0,150,65))
         try:
             fps_text = font.render(
@@ -401,16 +409,21 @@ def game():
         except:
             pass
 
+        
 
         for player in players:
             if type(player) == Player:
-                player.draw(prozor)
+
+                if in_bank:
+
+                    player.draw(prozor, player.x - cx)
+                else:
+                    player.draw(prozor)
 
                 print(f"{player.x , player.y}")
                 playerrect = pygame.Rect(player.x, player.y, 35, 65)
 
                 laptoprect = pygame.Rect(
-
                     280, 120, txt_laptop.get_width(), txt_laptop.get_height()
                 )
                 if playerrect.colliderect(laptoprect) or playerrect.colliderect(
@@ -419,6 +432,7 @@ def game():
                     )
                 ):
                     MinersUpgradeMenu()
+
                 # print(f"Rendered player @{player.x, player.y}")
 
         fps_text = font.render(
@@ -451,12 +465,12 @@ def main_menu():
         nacrtaj_dugme_bez_centiranja(main_menu_dugme_quit)
         nacrtaj_dugme_bez_centiranja(main_menu_dugme_credits)
         nacrtaj_dugme_bez_centiranja(main_menu_play_button)
- 
+
         mouse_state = pygame.mouse.get_pressed()
         for dogadjaj in pygame.event.get():
             if dogadjaj.type == pygame.QUIT:
                 program_radi = False
-                sys.exit() 
+                sys.exit()
 
             if dogadjaj.type == pygame.MOUSEBUTTONDOWN:
                 if main_menu_dugme_quit.rect.collidepoint(dogadjaj.pos):
@@ -501,7 +515,6 @@ lista_zidova = [
     pygame.Rect(520, 175, 235, 110),
     pygame.Rect(865, 190, 210, 110),
     # pygame.Rect(1105, 290, 50, 125),
-
     # pygame.Rect(775, 290, 55, 120),
     # pygame.Rect(445, 290, 50, 125),
     # pygame.Rect(115, 290, 55, 120),
@@ -511,48 +524,13 @@ lista_zidova = [
     pygame.Rect(970, 465, 205, 115),
     pygame.Rect(1180, 660, 25, 25),
     pygame.Rect(70, 660, 30, 20),
-    pygame.Rect(20, 50, 2, 645),
-    pygame.Rect(20, 695, 575, 2),
-    pygame.Rect(680, 695, 575, 2),
-    pygame.Rect(1255, 50, 2, 640),
+    pygame.Rect(20 + 42069, 50, 2, 645),
+    pygame.Rect(20+ 42069, 695, 575, 2),
+    pygame.Rect(680+ 42069, 695, 575, 2),
+    pygame.Rect(1255+ 42069, 50, 2, 640),
 ]
 
 
-def cas():
-    global temp_player
-    program_radi = True
-    while program_radi:                                                                                     
-        for dogadjaj in pygame.event.get():                                                                                     
-            if dogadjaj.type == pygame.QUIT:                                                                                     
-                program_radi = False                                                                                     
-                sys.exit()                                                                                     
-        prozor.blit(txt_cas, (0, 0))                                                                                     
-        pygame.draw.rect(prozor, pygame.Color("blue"), temp_player)                                                                                     
-        for zid in lista_zidova:                                                                                     
-            pygame.draw.rect(prozor, pygame.Color("red"), zid, 5)                                                                                     
-                                                                                     
-        keys = pygame.key.get_pressed()                                                      
-
-
-        if keys[pygame.K_w]:                                                                                     
-            temp_player.y -= 5                                                                                     
-        if keys[pygame.K_s]:                                                                                     
-            temp_player.y += 5                                                                                     
-        if keys[pygame.K_d]:                                                                                     
-            temp_player.x += 5                                                                                     
-        if keys[pygame.K_a]:                                                                                     
-            temp_player.x -= 5                                                                                     
-        print(f"{temp_player.x} {temp_player.y} ")                                                                                     
-
-       # if temp_player.colliderect()
-
-
-
-
-
-        pygame.display.update()                                                                                     
-                                                                                     
-                                                                                     
-main_menu()                                                                                     
-#cas()                                                                                     
-                                                                                     
+# bank()
+main_menu()
+# cas()
