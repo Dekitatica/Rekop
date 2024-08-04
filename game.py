@@ -347,17 +347,10 @@ def game():
 
     client_socket.sendall(f"set_team?{team}|".encode())
     while program_radi:
-<<<<<<< HEAD
         laptoprect = pygame.Rect(
             280, 120, txt_laptop.get_width(), txt_laptop.get_height()
         )
-        create_transparent_rect(prozor,pygame.Color("Black"),pygame.Rect(0,0,150,50))
-=======
-
-        create_transparent_rect(
-            prozor, pygame.Color("Black"), pygame.Rect(0, 0, 150, 50)
-        )
->>>>>>> dfb57fe4b723f79004b4a41c7caf853f94aeeeaa
+        #create_transparent_rect(prozor,pygame.Color("Black"),pygame.Rect(0,0,150,50))
 
         if frame_count % 60 == 0:
             try:
