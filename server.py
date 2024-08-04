@@ -177,7 +177,7 @@ teams_dict = {
     "bank":team_bank,
     "hero":team_hero
 }
-def earn_money_loop(teams : list[Client]):
+def earn_money_loop(teams : list[Team], clients : list[Client]):
     global upgrades 
     while True:
         if len(team_bank.members) != 0 and len(team_hero.members)!=0:
@@ -188,13 +188,12 @@ def earn_money_loop(teams : list[Client]):
                         money_to_give+=upgrades[up][0]
                 team.money+=money_to_give*team.multip
                 print(f"[{team.name.capitalize()}]: {team.money} coins!")
-                if team.money >= 15000:
-                    print("You win!")
-                    for cli in teams:
-                        if cli.player.team == team:
-                            cli.con.sendall("end?You win!".encode())
+                if team.money>15000:
+                    for cl in clients:
+                        if cl.player.team == team.name:
+                            cl.con.sendall("end?You win")
                         else:
-                            cli.con.sendall("emd?L".encode())
+                            cl.con.sendall("end?L")
         time.sleep(1)
 
 def buy_upgrade(cli : Client):
@@ -376,7 +375,7 @@ if __name__=="__main__":
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     server_socket.bind((SERVER_HOST, SERVER_PORT))
-
+ 
     threads = []
 
 
@@ -412,7 +411,6 @@ if __name__=="__main__":
         time.sleep(0.2)
         send_world(new_client)
         
-
 
         print("pre-end")
         t1 = threading.Thread(target=handle_client,args=[connections[-1]])
