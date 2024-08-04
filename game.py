@@ -6,7 +6,7 @@ from Player import Player
 import pygame
 import server
 import time
-from npc import NPC
+
 
 
 pygame.init()
@@ -424,13 +424,7 @@ def game():
         for player in players:
             if type(player) == Player:
                 if player.id == selfid:
-                    if playerrect.colliderect(laptoprect) or playerrect.colliderect(
-                        pygame.Rect(
-                            660, 120, txt_laptop.get_width(), txt_laptop.get_height()
-                        )
-                    ):
-
-                        MinersUpgradeMenu()
+                    pass
 
                 if in_bank:
                     player.rect.x = 1000
@@ -456,7 +450,12 @@ def game():
                         )
                     ):
                         MinersUpgradeMenu()
-
+                    if playerrect.colliderect(laptoprect) or playerrect.colliderect(
+                        pygame.Rect(
+                            660, 120, txt_laptop.get_width(), txt_laptop.get_height()
+                        )
+                    ):
+                        MinersUpgradeMenu()
                 # print(f"Rendered player @{player.x, player.y}")
 
         fps_text = font.render(
@@ -464,10 +463,7 @@ def game():
         )
         # MinersUpgradeMenu()
         prozor.blit(fps_text, (0, 0))
-        global npc
-        npc.draw(prozor)
 
-        print(f"{npc.x , npc.y}")
         pygame.display.update()
 
         sat.tick(60)
