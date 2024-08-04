@@ -191,7 +191,7 @@ def earn_money_loop(teams : list[Team], clients : list[Client]):
                 if team.money>15000:
                     for cl in clients:
                         if cl.player.team == team.name:
-                            cl.con.sendall("end?You win".encode())
+                            cl.con.sendall("end?You win!".encode())
                         else:
                             cl.con.sendall("end?L".encode())
         time.sleep(1)
@@ -316,7 +316,7 @@ def handle_client(cli : Client) -> None:
                                 cli.player.team="bank"
                                 if cli.player.id not in team_bank.members:
                                     team_bank.members.append(cli.player.id)
-                                    cli.player.x = 600
+                                    cli.player.x = 42369
                                     cli.player.y = 400
                             if args=="hero":
                                 cli.player.team="hero"
