@@ -6,7 +6,7 @@ from Player import Player
 import pygame
 import server
 import time
-from npc import NPC
+
 import os
 
 pygame.init()
@@ -80,9 +80,11 @@ btn_buy_miner = Dugme(
     pygame.Rect(460, 550, 320, 60),
     pygame.Color("black"),
 )
-btn_buy_bank = Dugme(font_upgrade.render("Upgrade Bank", True, (255, 255, 255)),
+btn_buy_bank = Dugme(
+    font_upgrade.render("Upgrade Bank", True, (255, 255, 255)),
     pygame.Rect(460, 550, 320, 60),
-    pygame.Color("black"),)
+    pygame.Color("black"),
+)
 
 teams_dict = {}
 
@@ -102,47 +104,51 @@ def handle_server(client_socket):
             data = str(data)
             if data != "":
                 # print(data)
-                if data.startswith("heartbeat?"):
-                    beatid = data.split("?")[1]
-                    client_socket.sendall(f"heartbeat_received:{beatid}|".encode())
-                if data.startswith("players?"):
-                    dat = data.split("players?")[1]
-                    players2 = json.loads(dat)
-                    while len(players) < len(players2):
-                        players.append(0)
-                    for i in range(len(players2)):
-                        players[i] = dictToPlayer(json.loads(players2[i]))
-                        # print("got players")
-                if data.startswith("worlddata?"):
-                    dat = data.split("worlddata?")[1]
-                    world_info = json.loads(dat)
-                    world_info["walls"] = [
-                        pygame.Rect(x, y, w, h) for x, y, w, h in world_info["walls"]
-                    ]
-                    zidovi = world_info["walls"]
-                    print("got worlddata")
-                if data.startswith("id?"):
-                    dat = data.split("id?")
-                    for player in players:
-                        if player.id == dat[1]:
-                            selfid = player.id
-                            selfPlayer = player
-                if data.startswith("teams?"):
-                    dat = data.split("?")[1]
-                    dat = json.loads(dat)
-                    teams_dict["bank"] = dictToTeam(json.loads(dat["bank"]))
-                    teams_dict["hero"] = dictToTeam(json.loads(dat["hero"]))
-                    a = 5
-                if data.startswith("end?"):
-                    dat = data.split("?")[1]
-                    if dat.startswith("L"):
-                        print("izgubio si crncu")
-                        os._exit(69)
-                        exit()
-                    if dat.startswith("You win!"):
-                        print("pobeda")
-                        os._exit(69)
-                        exit()
+                data2 = data
+                for data in data2.split("|"):
+
+                    if data.startswith("heartbeat?"):
+                        beatid = data.split("?")[1]
+                        client_socket.sendall(f"heartbeat_received:{beatid}|".encode())
+                    if data.startswith("players?"):
+                        dat = data.split("players?")[1]
+                        players2 = json.loads(dat)
+                        while len(players) < len(players2):                                         
+                            players.append(0)
+                        for i in range(len(players2)):
+                            players[i] = dictToPlayer(json.loads(players2[i]))
+                            # print("got players")
+                    if data.startswith("worlddata?"):
+                        dat = data.split("worlddata?")[1]
+                        world_info = json.loads(dat)
+                        world_info["walls"] = [
+                            pygame.Rect(x, y, w, h)
+                            for x, y, w, h in world_info["walls"]
+                        ]
+                        zidovi = world_info["walls"]
+                        print("got worlddata")
+                    if data.startswith("id?"):
+                        dat = data.split("id?")
+                        for player in players:
+                            if player.id == dat[1]:
+                                selfid = player.id
+                                selfPlayer = player
+                    if data.startswith("teams?"):
+                        dat = data.split("?")[1]
+                        dat = json.loads(dat)
+                        teams_dict["bank"] = dictToTeam(json.loads(dat["bank"]))
+                        teams_dict["hero"] = dictToTeam(json.loads(dat["hero"]))
+                        a = 5
+                    if data.startswith("end?"):
+                        dat = data.split("?")[1]
+                        if dat.startswith("L"):
+                            print("izgubio si crncu")
+                            os._exit(69)
+                            exit()
+                        if dat.startswith("You win!"):
+                            print("pobeda")
+                            os._exit(69)
+                            exit()
 
         except Exception as e:
             print(e)
@@ -269,7 +275,6 @@ def change_house_layer(players):
             prozor.blit(txt_house_floor, (580, 130))
             prozor.blit(txt_laptop, (660, 120))
             k2 = False
-        
 
     if k1:
         prozor.blit(txt_kuca, (120, 60))
@@ -301,15 +306,14 @@ def MinersUpgradeMenu():
         prozor.blit(upgrade_level_text, (80, 150))
 
 
-
 def BankUpgradeMenu():
     create_transparent_rect(prozor, (0, 0, 0, 127), (20, 20, 1240, 680))
     nacrtaj_dugme_bez_centiranja(btn_buy_bank)
     if (
-    teams_dict != None
-    and selfPlayer != None
-    and selfPlayer.team != "na"
-    and len(teams_dict.keys()) != 0
+        teams_dict != None
+        and selfPlayer != None
+        and selfPlayer.team != "na"
+        and len(teams_dict.keys()) != 0
     ):
         upgrade_level_text = font_upgrade.render(
             f"Upgrade Level : {teams_dict[selfPlayer.team].latest_upgrade}",
@@ -348,8 +352,6 @@ def team_selector():
 in_bank = False
 
 
-
-
 def game():
     global selfMinerLevel
     global selfPlayer
@@ -377,8 +379,8 @@ def game():
         laptoprect = pygame.Rect(
             280, 120, txt_laptop.get_width(), txt_laptop.get_height()
         )
-        
-        #create_transparent_rect(prozor,pygame.Color("Black"),pygame.Rect(0,0,150,50))
+
+        # create_transparent_rect(prozor,pygame.Color("Black"),pygame.Rect(0,0,150,50))
 
         if frame_count % 60 == 0:
             try:
@@ -402,10 +404,12 @@ def game():
                     client_socket.sendall(f"buy_upgrade?".encode())
                 if btn_buy_bank.rect.collidepoint(dogadjaj.pos):
                     client_socket.sendall(f"buy_upgrade?".encode())
+            
+                
         keys = pygame.key.get_pressed()
 
         important_keys = {"w": False, "s": False, "a": False, "d": False}
-        
+
         if keys[pygame.K_w]:
             important_keys["w"] = True
             # cy+=1
@@ -421,6 +425,7 @@ def game():
         if keys[pygame.K_b]:
             in_bank = True
             client_socket.sendall("teleport_to_bank?|".encode())
+        
 
         for key in important_keys.keys():
             if important_keys[key] == True:
@@ -432,7 +437,7 @@ def game():
         else:
             prozor.fill(pygame.Color("green"))
             prozor.blit(txt_bank, (0, 0))
-
+       
         create_transparent_rect(prozor, (0, 0, 0, 127), pygame.Rect(1130, 0, 150, 65))
         try:
             fps_text = font.render(f"MONEY", False, pygame.Color("white"))
@@ -446,32 +451,40 @@ def game():
                 f"HERO : {teams_dict['hero'].money}", False, pygame.Color("white")
             )
             prozor.blit(fps_text, (1130, 45))
-
+        
         except:
             pass
-            
+
         for player in players:
             if type(player) == Player:
                 if player.id == selfid:
                     pass
 
-
                 if in_bank:
                     player.rect.x = 1000
                     prozor.blit(txt_atm, (280, 60))
-                    prozor.blit(txt_atm, (610, 60)) 
+                    prozor.blit(txt_atm, (610, 60))
                     prozor.blit(txt_atm, (950, 60))
-                    prozor.blit(txt_laptop ,  (1000 , 560))
+                    prozor.blit(txt_laptop, (1000, 560))
 
                     player.draw(prozor, player.x - cx)
 
                 else:
                     player.draw(prozor)
-
+                pygame.draw.rect(
+                    prozor,
+                    pygame.Color("red"),
+                    pygame.Rect(
+                        1000 + 42069 - cx,
+                        560,
+                        txt_laptop.get_width(),
+                        txt_laptop.get_height(),
+                    ),
+                )
                 # print(f"{player.x , player.y}")
                 playerrect = pygame.Rect(player.x, player.y, 35, 65)
-                atm_rect = pygame.Rect(280 , 60 , 100,100)
-                if player==selfPlayer:
+                atm_rect = pygame.Rect(280, 60, 100, 100)
+                if player == selfPlayer:
 
                     if playerrect.colliderect(laptoprect) or playerrect.colliderect(
                         pygame.Rect(
@@ -479,9 +492,8 @@ def game():
                         )
                     ):
                         MinersUpgradeMenu()
-                    if playerrect.colliderect(pygame.Rect(1000  + 42069 , 560  , txt_laptop.get_width(), txt_laptop.get_height())):
-                        BankUpgradeMenu()
-                    #if playerrect.colliderect(pygame.Rect())
+                    
+                    # if playerrect.colliderect(pygame.Rect())
 
                 # print(f"Rendered player @{player.x, player.y}")
 
@@ -489,9 +501,11 @@ def game():
             f"FPS : {round(sat.get_fps() , 0)}", False, pygame.Color("black")
         )
         # MinersUpgradeMenu()
+        if keys[pygame.K_TAB] and selfPlayer.team == "bank":
+            BankUpgradeMenu()
         prozor.blit(fps_text, (0, 0))
 
-        #print(f"{npc.x , npc.y}")
+        # print(f"{npc.x , npc.y}")
         pygame.display.update()
 
         sat.tick(60)
@@ -536,9 +550,12 @@ def main_menu():
         pygame.display.update()
         sat.tick(60)
 
+
 luka = pygame.image.load("images//IMG_1683.jpeg")
 luka = pygame.transform.scale(luka, (300, 500))
 luka = pygame.transform.rotate(luka, -90)
+
+
 def game_credits():
     credits_speed = 0
     credits_timer = 5
@@ -553,7 +570,7 @@ def game_credits():
         prozor.blit(text_credits_deki, (480, credits_speed))
         prozor.blit(deki, (480, -400 + credits_speed))
         prozor.blit(text_credits_luka, (480, -700 + credits_speed))
-        prozor.blit(luka , (400 , -1100 + credits_speed))
+        prozor.blit(luka, (400, -1100 + credits_speed))
         credits_timer -= 0.0001
         if credits_timer < 0:
             return
@@ -582,10 +599,10 @@ lista_zidova = [
     pygame.Rect(20 + 42069, 695, 575, 2),
     pygame.Rect(680 + 42069, 695, 575, 2),
     pygame.Rect(1255 + 42069, 50, 2, 640),
-    pygame.Rect(0 , 0 , 2 , 720),
-    pygame.Rect(0 , 0 , 1280 , 2),
-    pygame.Rect(0,720 , 1280 ,2),
-    pygame.Rect(1280,  0 , 2 , 720)
+    pygame.Rect(0, 0, 2, 720),
+    pygame.Rect(0, 0, 1280, 2),
+    pygame.Rect(0, 720, 1280, 2),
+    pygame.Rect(1280, 0, 2, 720),
 ]
 
 

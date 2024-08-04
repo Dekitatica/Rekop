@@ -90,7 +90,7 @@ def send_all_players(connections : list[Client]):
     for cli in connections:
         players.append(cli.player.toJSON())
 
-    json_obj = ("players?"+json.dumps(players)).encode()
+    json_obj = ("players?"+json.dumps(players)+"|").encode()
 
     for cli in connections:
         try:
@@ -170,7 +170,7 @@ def send_world(cli : Client):
     for i in range(len(world_info["walls"])):
         world_info2["walls"].append(utility.rect_to_list(world_info["walls"][i]))  #Maybe have other stuff too?
     json_obj = json.dumps(world_info2)
-    cli.con.sendall(("worlddata?"+json_obj).encode())
+    cli.con.sendall(("worlddata?"+json_obj+"|").encode())
 
 teams = [team_hero,team_bank]
 teams_dict = {
@@ -191,9 +191,9 @@ def earn_money_loop(teams : list[Team], clients : list[Client]):
                 if team.money>15000:
                     for cl in clients:
                         if cl.player.team == team.name:
-                            cl.con.sendall("end?You win!".encode())
+                            cl.con.sendall("end?You win!|".encode())
                         else:
-                            cl.con.sendall("end?L".encode())
+                            cl.con.sendall("end?L|".encode())
         time.sleep(1)
 
 def buy_upgrade(cli : Client):
@@ -214,7 +214,7 @@ def send_all_teams(clients : list[Client]):
 
     json_obj = json.dumps(teams_dict2)
     for cli in clients:
-        cli.con.sendall(f"teams?{json_obj}".encode())
+        cli.con.sendall(f"teams?{json_obj}|".encode())
 
 def blj(cli : Client,bet : int):
     available_cards = []
@@ -227,60 +227,60 @@ def blj(cli : Client,bet : int):
 
     player_cards.append(utility.pick_a_card(available_cards,player_cards))
 
-    cli.con.sendall(f"dealer_cards?{json.dumps(dealer[1:len(dealer)])}")
-    cli.con.sendall(f"your_cards?{json.dumps(player_cards)}")
+    cli.con.sendall(f"dealer_cards?{json.dumps(dealer[1:len(dealer)])}||")
+    cli.con.sendall(f"your_cards?{json.dumps(player_cards)}|")
     extra_wager = -1
     while True:
         if len(cli.player.blj_feed)!=0:
             com = str(cli.player.blj_feed[0])
             if com.startswith("blj_hit?"):
                 player_cards.append(utility.pick_a_card(available_cards,player_cards))
-                cli.con.sendall(f"your_cards?{json.dumps(player_cards)}")
+                cli.con.sendall(f"your_cards?{json.dumps(player_cards)}|")
 
                 if sum(player_cards)>21:
-                    cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                    cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}|")
                     cli.player.money-=bet
                     return
             if com.startswith("blj_stand?"):
                 while True:
                     if sum(dealer)<17:
                         dealer.append(utility.pick_a_card(available_cards,dealer))
-                        cli.con.sendall(f"dealer_cards?{json.dumps(dealer[1:len(dealer)])}")
+                        cli.con.sendall(f"dealer_cards?{json.dumps(dealer[1:len(dealer)])}|")
                         if sum(dealer)>21:
-                            cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                            cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}|")
                             cli.player.money+=bet
                             return
                     else:
                         if sum(player_cards)>sum(dealer):
-                            cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                            cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}|")
                             cli.player.money+=bet
                             return
                         else:
-                            cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                            cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}|")
                             cli.player.money-=bet
                             return
             if com.startswith("blj_double_down?") and extra_wager!=-1:
                 player_cards.append(utility.pick_a_card(available_cards,player_cards))
-                cli.con.sendall(f"your_cards?{json.dumps(player_cards)}")
+                cli.con.sendall(f"your_cards?{json.dumps(player_cards)}|")
                 if sum(player_cards)>21:
-                    cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                    cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}|")
                     cli.player.money-=bet
                     return          
                 while True:
                     if sum(dealer)<17:
                         dealer.append(utility.pick_a_card(available_cards,dealer))
-                        cli.con.sendall(f"dealer_cards?{json.dumps(dealer[1:len(dealer)])}")
+                        cli.con.sendall(f"dealer_cards?{json.dumps(dealer[1:len(dealer)])}|")
                         if sum(dealer)>21:
-                            cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                            cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}|")
                             cli.player.money+=bet
                             return
                     else:
                         if sum(player_cards)>sum(dealer):
-                            cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                            cli.con.sendall(f"blj_end?win;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}|")
                             cli.player.money+=bet
                             return
                         else:
-                            cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}")
+                            cli.con.sendall(f"blj_end?loss;{json.dumps(player_cards)};{json.dumps(dealer)};{bet}|")
                             cli.player.money-=bet
                             return                       
 
