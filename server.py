@@ -188,10 +188,10 @@ def earn_money_loop(teams : list[Team], clients : list[Client]):
                         money_to_give+=upgrades[up][0]
                 team.money+=money_to_give*team.multip
                 print(f"[{team.name.capitalize()}]: {team.money} coins!")
-                if team.money>150:
+                if team.money>15000:
                     for cl in clients:
                         if cl.player.team == team.name:
-                            cl.con.sendall("end?You win".encode())
+                            cl.con.sendall("end?You win!".encode())
                         else:
                             cl.con.sendall("end?L".encode())
         time.sleep(1)

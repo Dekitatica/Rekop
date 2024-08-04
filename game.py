@@ -309,10 +309,12 @@ def team_selector():
             if dogadjaj.type == pygame.MOUSEBUTTONDOWN:
                 if miners_team_button.rect.collidepoint(dogadjaj.pos):
                     team = "hero"
+                    pygame.display.set_caption("Hero client")
                     game()
                 if bank_team_button.rect.collidepoint(dogadjaj.pos):
                     team = "bank"
                     in_bank = True
+                    pygame.display.set_caption("Bank client")
                     game()
 
         prozor.fill(pygame.Color("cyan"))
