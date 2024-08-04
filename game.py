@@ -439,7 +439,7 @@ def game():
 
                 print(f"{player.x , player.y}")
                 playerrect = pygame.Rect(player.x, player.y, 35, 65)
-
+                atm_rect = pygame.Rect(280 , 60 , 100,100)
                 if player==selfPlayer:
                     laptoprect = pygame.Rect(
                         280, 120, txt_laptop.get_width(), txt_laptop.get_height()
