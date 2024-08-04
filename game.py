@@ -6,6 +6,8 @@ from Player import Player
 import pygame
 import server
 import time
+from npc import NPC
+
 
 pygame.init()
 prozor = pygame.display.set_mode((1280, 720))
@@ -316,6 +318,10 @@ def team_selector():
 
 in_bank = False
 
+npc = NPC(600, 720, 280, 60)
+npc.initial_x = 600
+npc.initial_y = 720
+
 
 def game():
     global selfMinerLevel
@@ -341,10 +347,17 @@ def game():
 
     client_socket.sendall(f"set_team?{team}|".encode())
     while program_radi:
+<<<<<<< HEAD
         laptoprect = pygame.Rect(
             280, 120, txt_laptop.get_width(), txt_laptop.get_height()
         )
         create_transparent_rect(prozor,pygame.Color("Black"),pygame.Rect(0,0,150,50))
+=======
+
+        create_transparent_rect(
+            prozor, pygame.Color("Black"), pygame.Rect(0, 0, 150, 50)
+        )
+>>>>>>> dfb57fe4b723f79004b4a41c7caf853f94aeeeaa
 
         if frame_count % 60 == 0:
             try:
@@ -397,35 +410,33 @@ def game():
         else:
             prozor.fill(pygame.Color("green"))
             prozor.blit(txt_bank, (0, 0))
-        create_transparent_rect(prozor,(0,0,0,127),pygame.Rect(1130,0,150,65))
+
+        create_transparent_rect(prozor, (0, 0, 0, 127), pygame.Rect(1130, 0, 150, 65))
         try:
-            fps_text = font.render(
-                f"MONEY", False, pygame.Color("white")
-            )
-            prozor.blit(fps_text,(1130,0))
-            
+            fps_text = font.render(f"MONEY", False, pygame.Color("white"))
+            prozor.blit(fps_text, (1130, 0))
+
             fps_text = font.render(
                 f"BANK : {teams_dict['bank'].money}", False, pygame.Color("white")
             )
-            prozor.blit(fps_text,(1130,25))
+            prozor.blit(fps_text, (1130, 25))
             fps_text = font.render(
                 f"HERO : {teams_dict['hero'].money}", False, pygame.Color("white")
             )
-            prozor.blit(fps_text,(1130,45))
-            
+            prozor.blit(fps_text, (1130, 45))
+
         except:
             pass
-
-        
 
         for player in players:
             if type(player) == Player:
                 if player.id == selfid:
                     if playerrect.colliderect(laptoprect) or playerrect.colliderect(
-                    pygame.Rect(
-                        660, 120, txt_laptop.get_width(), txt_laptop.get_height())
+                        pygame.Rect(
+                            660, 120, txt_laptop.get_width(), txt_laptop.get_height()
+                        )
                     ):
-                    
+
                         MinersUpgradeMenu()
 
                 if in_bank:
@@ -439,7 +450,7 @@ def game():
                 else:
                     player.draw(prozor)
 
-                print(f"{player.x , player.y}")
+                # print(f"{player.x , player.y}")
                 playerrect = pygame.Rect(player.x, player.y, 35, 65)
                 atm_rect = pygame.Rect(280 , 60 , 100,100)
                 if player==selfPlayer:
@@ -458,7 +469,10 @@ def game():
         )
         # MinersUpgradeMenu()
         prozor.blit(fps_text, (0, 0))
+        global npc
+        npc.draw(prozor)
 
+        print(f"{npc.x , npc.y}")
         pygame.display.update()
 
         sat.tick(60)
