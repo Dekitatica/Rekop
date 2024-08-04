@@ -16,7 +16,7 @@ world_info = world.getworld()
 # Money per second, cost
 upgrades = {
     "0" : [1,0],
-    "1" : [5,30],
+     "1" : [5,30],
     "2" : [10,100],
     "3" : [20,850],
     "4" : [40,3500],
