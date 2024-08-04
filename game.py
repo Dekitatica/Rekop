@@ -7,7 +7,7 @@ import pygame
 import server
 import time
 from npc import NPC
-
+import os
 
 pygame.init()
 prozor = pygame.display.set_mode((1280, 720))
@@ -134,8 +134,12 @@ def handle_server(client_socket):
                     dat = data.split("?")[1]
                     if dat.startswith("L"):
                         print("izgubio si crncu")
+                        os._exit(69)
+                        exit()
                     if dat.startswith("You win!"):
                         print("pobeda")
+                        os._exit(69)
+                        exit()
 
         except Exception as e:
             print(e)
@@ -295,6 +299,7 @@ def MinersUpgradeMenu():
 
 def team_selector():
     global team
+    global in_bank
     program_radi = True
     while program_radi:
         for dogadjaj in pygame.event.get():
@@ -307,7 +312,7 @@ def team_selector():
                     game()
                 if bank_team_button.rect.collidepoint(dogadjaj.pos):
                     team = "bank"
-
+                    in_bank = True
                     game()
 
         prozor.fill(pygame.Color("cyan"))
@@ -458,7 +463,7 @@ def game():
         global npc
         npc.draw(prozor)
 
-        print(f"{npc.x , npc.y}")
+        #print(f"{npc.x , npc.y}")
         pygame.display.update()
 
         sat.tick(60)
