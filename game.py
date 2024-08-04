@@ -341,7 +341,9 @@ def game():
 
     client_socket.sendall(f"set_team?{team}|".encode())
     while program_radi:
-
+        laptoprect = pygame.Rect(
+            280, 120, txt_laptop.get_width(), txt_laptop.get_height()
+        )
         create_transparent_rect(prozor,pygame.Color("Black"),pygame.Rect(0,0,150,50))
 
         if frame_count % 60 == 0:
@@ -429,7 +431,7 @@ def game():
                 if in_bank:
                     player.rect.x = 1000
                     prozor.blit(txt_atm, (280, 60))
-                    prozor.blit(txt_atm, (610, 60))
+                    prozor.blit(txt_atm, (610, 60)) 
                     prozor.blit(txt_atm, (950, 60))
 
                     player.draw(prozor, player.x - cx)
@@ -441,9 +443,7 @@ def game():
                 playerrect = pygame.Rect(player.x, player.y, 35, 65)
                 atm_rect = pygame.Rect(280 , 60 , 100,100)
                 if player==selfPlayer:
-                    laptoprect = pygame.Rect(
-                        280, 120, txt_laptop.get_width(), txt_laptop.get_height()
-                    )
+
                     if playerrect.colliderect(laptoprect) or playerrect.colliderect(
                         pygame.Rect(
                             660, 120, txt_laptop.get_width(), txt_laptop.get_height()
